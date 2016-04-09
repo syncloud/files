@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="favicon.ico">
+
+  <title>Syncloud</title>
+
+  <link href="css/lib/bootstrap-3.3.1.min.css" rel="stylesheet">
+<link href="css/lib/font-awesome-4.0.3.css" rel="stylesheet">
+
+<script type="text/javascript" src="js/lib/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="js/lib/bootstrap-3.3.1.min.js"></script>
+
+<script type="text/javascript" src="js/lib/underscore-min.js"></script>
+<script type="text/javascript" src="js/lib/URI.js"></script>
+
+
+  <script type="text/javascript" src="js/android.js"></script>
+<script type="text/javascript" src="js/mobile.js"></script>
+<script type="text/javascript" src="js/error.js"></script>
+
+  <link href="css/main-menu.css" rel="stylesheet">
+  <link href="css/form-center.css" rel="stylesheet">
+
+
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+      <a class="navbar-brand" href="#"><img src="images/logo-52.png"/><span>SYNCLOUD</span></a>
+    </div>
+
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav navbar-right menu-private" style="display: none">
+        <li>
+          <span id="menu_user_name"></span>
+          <button id="menu_logout" class="btn btn-default"><span class="glyphicon glyphicon-log-out"></span> Log out</button>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+<form class="form-horizontal" id="form-login">
+    <h2>Log in</h2>
+    <br/>
+
+    <fieldset>
+
+        <div id="errors_placeholder"></div>
+
+        <div id="group-email" class="form-group">
+            <div class="col-12 col-md-12 col-sm-12 col-lg-12">
+                <input id="name" name="name" type="text" placeholder="user" class="form-control input-md"
+                       required="">
+                <span id="help-email" class="help-block"></span>
+            </div>
+        </div>
+
+        <div id="group-password" class="form-group">
+            <div class="col-12 col-md-12 col-sm-12 col-lg-12">
+                <input id="password" name="password" type="password" placeholder="" class="form-control input-md"
+                       required="">
+                <span id="help-password" class="help-block"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="button-block col-12 col-md-12 col-sm-12 col-lg-12"
+                 style="padding-right:15px; padding-left:15px;">
+                <button id="btnlogin" name="btnlogin" class="btn btn-primary pull-right">Log in</button>
+            </div>
+        </div>
+
+    </fieldset>
+
+</form>
+
+<script type="text/html" id="error_template">
+    <div class="alert alert-danger">
+        <%= message %>
+    </div>
+</script>
+
+<script type="text/javascript">
+
+    function reset_error() {
+        $('#errors_placeholder').empty();
+        $('#group-email').removeClass('has-error');
+        $('#help-email').text('');
+        $('#group-password').removeClass('has-error');
+        $('#help-password').text('');
+    }
+
+    function show_error(error) {
+        if ('parameters_messages' in error) {
+            for (var i = 0; i < error.parameters_messages.length; i++) {
+                var pm = error.parameters_messages[i];
+                var group_id = '#group-' + pm.parameter;
+                $(group_id).addClass('has-error');
+                var hint_id = '#help-' + pm.parameter;
+                var message_text = pm.messages.join('\n');
+                $(hint_id).text(message_text);
+            }
+        } else {
+            var template = $('#error_template').html();
+            $('#errors_placeholder').html(_.template(template)(error));
+        }
+    }
+
+    $(document).ready(function () {
+        $("#form-login").submit(function (event) {
+            event.preventDefault();
+
+            var values = $("#form-login").serializeArray();
+            reset_error();
+            var posting = $.post("/rest/login", values)
+                    .done(function (data) {
+                        window.location.replace("/");
+                    })
+                    .fail(function (xhr, textStatus, errorThrown) {
+                        if (xhr.hasOwnProperty('responseJSON')) {
+                            var error = xhr.responseJSON;
+                            show_error(error);
+                        } else {
+                            window.location.href = "/login.html";
+                        }
+                    });
+        });
+    });
+</script>
+
+<script type="text/javascript">
+
+$( document ).ready(function() {
+
+    
+        $("#menu_login").addClass("active");
+    
+
+    $("#menu_logout").click(function(event) {
+        var posting = $.post( '/rest/logout' )
+            .done( function(data) {
+                window.location.href = "/login.html";
+            })
+            .fail( function(xhr, textStatus, errorThrown) {
+            });
+    });
+
+    $.get( "/rest/user" )
+        .done( function(data) {
+            var user = data;
+
+            $('#menu_user_name').text(user.email);
+
+            $('.menu-private').show();
+            $('.menu-public').hide();
+        })
+        .fail( function(xhr, textStatus, errorThrown) {
+        });
+
+    var internal_web = (new URI())
+        .port(81)
+        .directory("")
+        .filename("")
+        .query("");
+
+    var menu_reactivate = $("#menu_reactivate");
+    var reactivate_link = $("#reactivate_link");
+
+    $.get(internal_web)
+            .done(function (data){
+                menu_reactivate.removeClass('hidden');
+                reactivate_link.prop('href', internal_web)
+            })
+            .fail(function (data){
+                menu_reactivate.addClass('hidden');
+            });
+
+});
+
+</script>
+
+</body>
+</html>

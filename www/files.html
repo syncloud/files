@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="favicon.ico">
+
+  <title>Syncloud</title>
+
+  <link href="css/lib/bootstrap-3.3.1.min.css" rel="stylesheet">
+<link href="css/lib/font-awesome-4.0.3.css" rel="stylesheet">
+
+<script type="text/javascript" src="js/lib/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="js/lib/bootstrap-3.3.1.min.js"></script>
+
+<script type="text/javascript" src="js/lib/underscore-min.js"></script>
+<script type="text/javascript" src="js/lib/URI.js"></script>
+
+
+  <script type="text/javascript" src="js/android.js"></script>
+<script type="text/javascript" src="js/mobile.js"></script>
+<script type="text/javascript" src="js/error.js"></script>
+
+  <link href="css/main-menu.css" rel="stylesheet">
+  <link href="css/form-center.css" rel="stylesheet">
+
+
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+      <a class="navbar-brand" href="#"><img src="images/logo-52.png"/><span>SYNCLOUD</span></a>
+    </div>
+
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav navbar-right menu-private" style="display: none">
+        <li>
+          <span id="menu_user_name"></span>
+          <button id="menu_logout" class="btn btn-default"><span class="glyphicon glyphicon-log-out"></span> Log out</button>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+<style>
+    .row-odd{
+      background-color: #efefef;
+    }
+    .row-even {
+      background-color: #ffffff;
+    }
+</style>
+<div class="container" style="font-size: 24px">
+    <div id="items" class="form-horizontal"></div>
+</div>
+
+<!-- Create your template -->
+<script type="text/html" id='item-template'>
+    <%for (s=0; s < items.length; s++) {
+       var item = items[s];
+       if (dir == '/')
+         dir = '';
+       var full_path = dir + '/' + item.name
+    %>
+
+    <% if (s % 2 == 0) {
+        color = 'row-odd'
+    } else {
+        color = 'row-even'
+    }
+    %>
+        <div class="row <%= color %>">
+
+        <div class="col-6 col-md-12 col-sm-12 col-xs-12 col-lg-12">
+              <div style="padding: 10px;">
+                  <% if (!item.is_file) { %>
+                    <a href="/files.html?dir=<%= full_path %>" class="clickable" ><%= item.name %></a>
+                  <% } else { %>
+                    <a href="/rest/files<%= full_path %>" class="clickable"><%= item.name %></a>
+                  <% } %>
+              </div>
+        </div>
+
+        </div>
+
+    <% } %>
+</script>
+
+<script type="text/javascript">
+
+    $( document ).ready(function() {
+        var uri = new URI();
+        var params = uri.query(true);
+        var dir = '/';
+        if (params["dir"])
+            dir = params["dir"];
+
+        $.get( '/rest/files' + dir)
+            .done( function(data) {
+                    var template = $("#item-template").html();
+                    $("#items").html(_.template(template)(data));
+            }).fail( onError );
+    });
+</script>
+
+
+<script type="text/javascript">
+
+$( document ).ready(function() {
+
+    
+        $("#menu_apps").addClass("active");
+    
+
+    $("#menu_logout").click(function(event) {
+        var posting = $.post( '/rest/logout' )
+            .done( function(data) {
+                window.location.href = "/login.html";
+            })
+            .fail( function(xhr, textStatus, errorThrown) {
+            });
+    });
+
+    $.get( "/rest/user" )
+        .done( function(data) {
+            var user = data;
+
+            $('#menu_user_name').text(user.email);
+
+            $('.menu-private').show();
+            $('.menu-public').hide();
+        })
+        .fail( function(xhr, textStatus, errorThrown) {
+        });
+
+    var internal_web = (new URI())
+        .port(81)
+        .directory("")
+        .filename("")
+        .query("");
+
+    var menu_reactivate = $("#menu_reactivate");
+    var reactivate_link = $("#reactivate_link");
+
+    $.get(internal_web)
+            .done(function (data){
+                menu_reactivate.removeClass('hidden');
+                reactivate_link.prop('href', internal_web)
+            })
+            .fail(function (data){
+                menu_reactivate.addClass('hidden');
+            });
+
+});
+
+</script>
+
+</body>
+</html>
