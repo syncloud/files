@@ -1,0 +1,23 @@
+APP_NAME = 'files'
+SYSTEMD_UWSGI_NAME = 'files-uwsgi'
+SYSTEMD_NGINX_NAME = 'files-nginx'
+
+from os.path import join
+import imp
+
+from syncloud_platform.tools import app
+from syncloud_platform.systemd import systemctl
+from syncloud_platform.api import app as platform_app
+
+app_dir = app.get_app_dir(APP_NAME)
+app_data_dir = app.get_app_data_root(APP_NAME)
+
+configure = imp.load_source('files.configure', join(app_dir, 'bin', 'configure.py'))
+
+configure.configure(app_dir, app_data_dir)
+
+systemctl.add_service(APP_NAME, SYSTEMD_UWSGI_NAME)
+systemctl.add_service(APP_NAME, SYSTEMD_NGINX_NAME)
+
+platform_app.register_app(APP_NAME, 1111)
+

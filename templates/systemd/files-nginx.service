@@ -1,0 +1,16 @@
+[Unit]
+Description=Files nginx
+Requires=files-uwsgi.service
+After=files-uwsgi.service
+
+[Service]
+;User=files
+Type=forking
+PIDFile=${app_data_dir}/nginx/nginx.pid
+ExecStartPre=${app_dir}/nginx/sbin/nginx -t -c ${app_dir}/config/nginx.conf -p ${app_dir}/nginx
+ExecStart=${app_dir}/nginx/sbin/nginx -c ${app_dir}/config/nginx.conf -p ${app_dir}/nginx
+ExecReload=${app_dir}/nginx/sbin/nginx -c ${app_dir}/config/nginx.conf -s reload -p ${app_dir}/nginx
+ExecStop=${app_dir}/nginx/sbin/nginx -c ${app_dir}/config/nginx.conf -s stop -p ${app_dir}/nginx
+
+[Install]
+WantedBy=multi-user.target
