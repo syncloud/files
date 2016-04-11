@@ -40,6 +40,7 @@ coin --to ${BUILD_DIR} raw ${DOWNLOAD_URL}/thirdparty_uwsgi_${ARCH}/lastSuccessf
 coin --to ${BUILD_DIR} raw ${DOWNLOAD_URL}/thirdparty_python_${ARCH}/lastSuccessful/python-${ARCH}.tar.gz
 
 cp -r ${DIR}/bin ${BUILD_DIR}
+cp -r ${DIR}/templates ${BUILD_DIR}
 cp -r ${DIR}/config ${BUILD_DIR}
 cp -r ${DIR}/www ${BUILD_DIR}
 cp -r ${DIR}/lib ${BUILD_DIR}
