@@ -12,7 +12,7 @@ from syncloud_platform.api import app as platform_app
 app_dir = app.get_app_dir(APP_NAME)
 app_data_dir = app.get_app_data_root(APP_NAME)
 
-configure = imp.load_source('files.configure', join(app_dir, 'bin', 'configure.py'))
+configure = imp.load_source('configure', join(app_dir, 'bin', 'configure.py'))
 
 configure.configure(app_dir, app_data_dir)
 
