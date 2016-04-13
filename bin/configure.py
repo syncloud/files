@@ -2,13 +2,22 @@ import os
 from os.path import join, dirname, isdir, abspath, relpath, exists
 from string import Template
 
+
 def makepath(path):
     if not exists(path):
         os.makedirs(path)
 
 def makefile(path, filename):
     makepath(path)
-    open(join(path, filename), 'w+')
+    filepath = join(path, filename)
+    createfile(filepath)
+
+def createfile(filepath):
+    try:
+        f = open(filepath, 'w+')
+        f.close()
+    except:
+        pass
 
 def generate_file(from_path, to_path, variables):
     from_file = open(from_path, 'r')
@@ -47,9 +56,10 @@ def configure(app_dir, app_data_dir):
     makepath(scgi_temp_path)
 
     uwsgi_path = join(app_data_dir, 'uwsgi')
+    makepath(uwsgi_path)
 
-    makefile(uwsgi_path, 'files.wsgi')
-    makefile(uwsgi_path, 'files.wsgi.sock')
+    createfile(join(uwsgi_path, 'files.wsgi'))
+    createfile(join(uwsgi_path, 'files.wsgi.sock'))
 
     variables = {'app_dir': app_dir, 'app_data_dir': app_data_dir}
 
