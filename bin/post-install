@@ -23,10 +23,10 @@ import configure
 
 configure.configure(app_dir, app_data_dir)
 
+chown.chown(USER_NAME, app_data_dir)
+
 systemctl.add_service(APP_NAME, SYSTEMD_UWSGI_NAME)
 systemctl.add_service(APP_NAME, SYSTEMD_NGINX_NAME)
-
-chown.chown(USER_NAME, app_data_dir)
 
 platform_app.register_app(APP_NAME, 1111)
 
