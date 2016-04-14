@@ -4,7 +4,7 @@ SYSTEMD_UWSGI_NAME = 'files-uwsgi'
 SYSTEMD_NGINX_NAME = 'files-nginx'
 
 import sys
-from os.path import join
+from os.path import join, isdir
 
 from syncloud_platform.tools import app
 from syncloud_platform.systemd import systemctl
