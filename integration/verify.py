@@ -87,6 +87,16 @@ def test_remove(syncloud_session):
 def test_reinstall(auth):
     __local_install(auth)
 
+def test_login():
+    session = requests.session()
+    response = session.post('http://localhost:1111/rest/login', data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
+    assert response.status_code == 200, response.text
+
+def test_browse_root():
+    session = requests.session()
+    response = session.post('http://localhost:1111/rest/files', data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
+    assert response.status_code == 200, response.text
+
 
 def __local_install(auth):
     email, password, domain, release, version, arch = auth
