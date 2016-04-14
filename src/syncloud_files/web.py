@@ -72,20 +72,20 @@ def create_web_app(app_dir):
 
 
     @app.route(rest_prefix + "/logout", methods=["POST"])
-    # @login_required
+    @login_required
     def logout():
         logout_user()
         return 'User logged out', 200
 
 
     @app.route(rest_prefix + "/user", methods=["GET"])
-    # @login_required
+    @login_required
     def user():
         return jsonify(convertible.to_dict(current_user.user)), 200
 
 
     @app.route('/')
-    # @login_required
+    @login_required
     def index():
         return static_file('index.html')
 
@@ -94,7 +94,7 @@ def create_web_app(app_dir):
 
     @app.route(files_prefix)
     @app.route(files_prefix + '<path:path>')
-    # @login_required
+    @login_required
     def browse(path=''):
         filesystem_path = join('/', path)
         if os.path.isfile(filesystem_path):
