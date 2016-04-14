@@ -5,6 +5,7 @@ SYSTEMD_NGINX_NAME = 'files-nginx'
 
 import sys
 from os.path import join, isdir
+import shutil
 
 from syncloud_platform.tools import app
 from syncloud_platform.systemd import systemctl
