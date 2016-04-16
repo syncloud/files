@@ -12,7 +12,7 @@ from syncloud_platform.api import app as platform_app
 from syncloud_platform.tools import chown
 
 app_dir = app.get_app_dir(APP_NAME)
-app_data_dir = app.get_app_data_dir(APP_NAME, USER_NAME)
+app_data_dir = app.get_app_data_dir(APP_NAME)
 
 chown.chown(USER_NAME, app_dir)
 
