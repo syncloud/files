@@ -2,13 +2,11 @@ import os
 from os.path import join, dirname, isdir, abspath, relpath, exists
 from string import Template
 
+from syncloud_platform.gaplib import fs, linux
 
-def makepath(path):
-    if not exists(path):
-        os.makedirs(path)
 
 def makefile(path, filename):
-    makepath(path)
+    fs.makepath(path)
     filepath = join(path, filename)
     createfile(filepath)
 
@@ -25,7 +23,7 @@ def generate_file(from_path, to_path, variables):
     from_file.close()
     t = Template(from_text)
     to_text = t.substitute(variables)
-    makepath(dirname(to_path))
+    fs.makepath(dirname(to_path))
     to_file = open(to_path, 'w+')
     to_file.write(to_text)
     to_file.close()
@@ -41,7 +39,7 @@ def generate_files(from_dir, to_dir, variables):
 def configure(app_dir, app_data_dir):
     log_path = join(app_data_dir, 'log')
 
-    makepath(log_path)
+    fs.makepath(log_path)
 
     client_body_temp_path = join(app_data_dir, 'nginx', 'client_body_temp')
     proxy_temp_path = join(app_data_dir, 'nginx', 'proxy_temp')
@@ -49,14 +47,14 @@ def configure(app_dir, app_data_dir):
     uwsgi_temp_path = join(app_data_dir, 'nginx', 'uwsgi_temp')
     scgi_temp_path = join(app_data_dir, 'nginx', 'scgi_temp')
 
-    makepath(client_body_temp_path)
-    makepath(proxy_temp_path)
-    makepath(fastcgi_temp_path)
-    makepath(uwsgi_temp_path)
-    makepath(scgi_temp_path)
+    fs.makepath(client_body_temp_path)
+    fs.makepath(proxy_temp_path)
+    fs.makepath(fastcgi_temp_path)
+    fs.makepath(uwsgi_temp_path)
+    fs.makepath(scgi_temp_path)
 
     uwsgi_path = join(app_data_dir, 'uwsgi')
-    makepath(uwsgi_path)
+    fs.makepath(uwsgi_path)
 
     createfile(join(uwsgi_path, 'files.wsgi'))
     createfile(join(uwsgi_path, 'files.wsgi.sock'))
