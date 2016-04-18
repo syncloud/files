@@ -1,4 +1,0 @@
-#!/bin/sh
-APP_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )
-cd ${APP_DIR}
-./python/bin/python bin/configure.py $@
