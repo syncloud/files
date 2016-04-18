@@ -10,7 +10,6 @@ import shutil
 from syncloud_platform.tools import app
 from syncloud_platform.systemd import systemctl
 from syncloud_platform.api import app as platform_app
-from syncloud_platform.tools import chown
 
 platform_app.unregister_app(APP_NAME)
 
