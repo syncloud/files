@@ -9,12 +9,14 @@ from os.path import join
 from syncloud_platform.tools import app
 from syncloud_platform.systemd import systemctl
 from syncloud_platform.api import app as platform_app
-from syncloud_platform.tools import chown
+
+from syncloud_platform.gaplib import fs, linux
 
 app_dir = app.get_app_dir(APP_NAME)
 app_data_dir = app.get_app_data_dir(APP_NAME)
 
-chown.chown(USER_NAME, app_dir)
+linux.useradd(USER_NAME)
+fs.chownpath(app_dir, USER_NAME, recursive=True)
 
 bin_path = join(app_dir, 'bin')
 sys.path.append(bin_path)
@@ -23,7 +25,7 @@ import configure
 
 configure.configure(app_dir, app_data_dir)
 
-chown.chown(USER_NAME, app_data_dir)
+fs.chownpath(app_data_dir, USER_NAME, recursive=True)
 
 systemctl.add_service(APP_NAME, SYSTEMD_UWSGI_NAME)
 systemctl.add_service(APP_NAME, SYSTEMD_NGINX_NAME)
