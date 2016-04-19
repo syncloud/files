@@ -4,12 +4,12 @@ SYSTEMD_UWSGI_NAME = 'files-uwsgi'
 SYSTEMD_NGINX_NAME = 'files-nginx'
 
 import sys
-from os.path import join, isdir
-import shutil
 
 from syncloud_platform.tools import app
 from syncloud_platform.systemd import systemctl
 from syncloud_platform.api import app as platform_app
+
+from syncloud_platform.gaplib import fs
 
 platform_app.unregister_app(APP_NAME)
 
@@ -18,7 +18,5 @@ systemctl.remove_service(SYSTEMD_UWSGI_NAME)
 
 app_dir = app.get_app_dir(APP_NAME)
 
-if isdir(app_dir):
-    shutil.rmtree(app_dir)
-
+fs.removepath(app_dir)
 

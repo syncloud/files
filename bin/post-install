@@ -10,43 +10,7 @@ from syncloud_platform.tools import app
 from syncloud_platform.systemd import systemctl
 from syncloud_platform.api import app as platform_app
 
-from syncloud_platform.gaplib import fs, linux
-
-import os
-from os.path import join, dirname, isdir, abspath, relpath, exists
-from string import Template
-
-
-def makefile(path, filename):
-    fs.makepath(path)
-    filepath = join(path, filename)
-    createfile(filepath)
-
-def createfile(filepath):
-    try:
-        f = open(filepath, 'w+')
-        f.close()
-    except:
-        pass
-
-def generate_file(from_path, to_path, variables):
-    from_file = open(from_path, 'r')
-    from_text = from_file.read()
-    from_file.close()
-    t = Template(from_text)
-    to_text = t.substitute(variables)
-    fs.makepath(dirname(to_path))
-    to_file = open(to_path, 'w+')
-    to_file.write(to_text)
-    to_file.close()
-
-def generate_files(from_dir, to_dir, variables):
-    for dir_name, subdirs, files in os.walk(from_dir):
-        for filename in files:
-            from_path = join(dir_name, filename)
-            from_rel_path = relpath(from_path, from_dir)
-            to_path = join(to_dir, from_rel_path)
-            generate_file(from_path, to_path, variables)
+from syncloud_platform.gaplib import fs, linux, gen
 
 
 app_dir = app.get_app_dir(APP_NAME)
@@ -75,15 +39,15 @@ fs.makepath(scgi_temp_path)
 uwsgi_path = join(app_data_dir, 'uwsgi')
 fs.makepath(uwsgi_path)
 
-createfile(join(uwsgi_path, 'files.wsgi'))
-createfile(join(uwsgi_path, 'files.wsgi.sock'))
+fs.createfile(join(uwsgi_path, 'files.wsgi'))
+fs.createfile(join(uwsgi_path, 'files.wsgi.sock'))
 
 variables = {'app_dir': app_dir, 'app_data_dir': app_data_dir}
 
 templates_path = join(app_dir, 'templates')
 config_path = join(app_dir, 'config')
 
-generate_files(templates_path, config_path, variables)
+gen.generate_files(templates_path, config_path, variables)
 
 fs.chownpath(app_data_dir, USER_NAME, recursive=True)
 
