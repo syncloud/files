@@ -6,7 +6,6 @@ SYSTEMD_NGINX_NAME = 'files-nginx'
 import sys
 from os.path import join
 
-from syncloud_platform.control import systemctl
 from syncloud_platform.application import api
 
 from syncloud_platform.gaplib import fs, linux, gen
