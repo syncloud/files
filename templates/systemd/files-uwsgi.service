@@ -4,13 +4,13 @@ After=syslog.target
 
 [Service]
 User=platform
-ExecStart=${app_dir}/uwsgi/bin/uwsgi --ini ${app_dir}/config/uwsgi/files.ini
+ExecStart={{ app_dir }}/uwsgi/bin/uwsgi --ini {{ app_dir }}/config/uwsgi/files.ini
 Restart=always
 KillSignal=SIGQUIT
 Type=notify
 StandardError=syslog
 NotifyAccess=all
-Environment=LD_LIBRARY_PATH=${app_dir}/python/lib
+Environment=LD_LIBRARY_PATH={{ app_dir }}/python/lib
 
 [Install]
 WantedBy=multi-user.target
