@@ -19,13 +19,8 @@
 <script type="text/javascript" src="js/lib/underscore-min.js"></script>
 <script type="text/javascript" src="js/lib/URI.js"></script>
 
-
-<script type="text/javascript" src="js/error.js"></script>
-
-  <link href="css/main-menu.css" rel="stylesheet">
-  <link href="css/form-center.css" rel="stylesheet">
-
-
+<link href="css/main-menu.css" rel="stylesheet">
+<link href="css/form-center.css" rel="stylesheet">
 
 </head>
 
@@ -103,30 +98,7 @@
 
 <script type="text/javascript">
 
-    $( document ).ready(function() {
-        var uri = new URI();
-        var params = uri.query(true);
-        var dir = '/';
-        if (params["dir"])
-            dir = params["dir"];
-
-        $.get( '/rest/files' + dir)
-            .done( function(data) {
-                    var template = $("#item-template").html();
-                    $("#items").html(_.template(template)(data));
-            }).fail( onError );
-    });
-</script>
-
-
-<script type="text/javascript">
-
 $( document ).ready(function() {
-
-    
-        $("#menu_apps").addClass("active");
-    
-
     $("#menu_logout").click(function(event) {
         var posting = $.post( '/rest/logout' )
             .done( function(data) {
@@ -135,6 +107,24 @@ $( document ).ready(function() {
             .fail( function(xhr, textStatus, errorThrown) {
             });
     });
+
+    var uri = new URI();
+    var params = uri.query(true);
+    var dir = '/';
+    if (params["dir"])
+        dir = params["dir"];
+
+    $.get( '/rest/files' + dir)
+        .done( function(data) {
+                var template = $("#item-template").html();
+                $("#items").html(_.template(template)(data));
+        }).fail(function(xhr, textStatus, errorThrown) {
+            if (xhr.status === 401) {
+                window.location.href = "/login.html";
+            } else {
+                window.location.href = "/error.html";
+            }
+        });
 
     $.get( "/rest/user" )
         .done( function(data) {
@@ -147,6 +137,7 @@ $( document ).ready(function() {
         })
         .fail( function(xhr, textStatus, errorThrown) {
         });
+
 });
 
 </script>
