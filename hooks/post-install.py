@@ -3,11 +3,9 @@ USER_NAME = 'platform'
 SYSTEMD_UWSGI_NAME = 'files-uwsgi'
 SYSTEMD_NGINX_NAME = 'files-nginx'
 
-import sys
 from os.path import join
 
 from syncloud_platform.application import api
-
 from syncloud_platform.gaplib import fs, linux, gen
 
 app = api.get_app_setup(APP_NAME)
