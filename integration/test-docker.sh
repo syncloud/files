@@ -10,7 +10,7 @@ fi
 
 ./docker.sh
 
-${DIR}/../coin_lib.sh
+pip2 install -r ${DIR}/../src/dev_requirements.txt
 
 apt-get install -y sshpass
 pip2 install -U pytest
