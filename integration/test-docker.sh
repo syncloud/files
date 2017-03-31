@@ -10,6 +10,8 @@ fi
 
 ./docker.sh
 
+${DIR}/../coin_lib.sh
+
 apt-get install -y sshpass
 pip2 install -U pytest
 py.test -x -s verify.py --email=$1 --password=$2 --domain=$3 --release=$4 --app-archive-path=$5
