@@ -91,7 +91,6 @@ def test_browse_root():
 
 
 def __local_install(app_archive_path):
-    email, password, domain, release, version, arch = auth
     run_scp('{0} root@localhost:/app.tar.gz'.format(app_archive_path), password=DEVICE_PASSWORD)
     run_ssh('/opt/app/sam/bin/sam --debug install /app.tar.gz', password=DEVICE_PASSWORD)
     set_docker_ssh_port(DEVICE_PASSWORD)

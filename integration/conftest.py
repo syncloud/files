@@ -19,7 +19,7 @@ def auth(request):
            config.getoption("--app-archive-path")
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='session')
 def app_archive_path(auth):
     _, _, _, _, app_archive = auth
     return app_archive
