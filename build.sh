@@ -32,6 +32,7 @@ coin --to ${BUILD_DIR} raw ${DOWNLOAD_URL}/thirdparty_python_${ARCH}/lastSuccess
 ${BUILD_DIR}/python/bin/pip install -r ${DIR}/requirements.txt
 
 cd src
+echo ${VERSION} > version
 ${BUILD_DIR}/python/bin/python setup.py install
 cd ..
 
@@ -42,8 +43,8 @@ cp -r ${DIR}/www ${BUILD_DIR}
 cp -r ${DIR}/lib ${BUILD_DIR}
 
 mkdir ${BUILD_DIR}/META
-echo ${NAME} >> ${BUILD_DIR}/META/app
-echo ${VERSION} >> ${BUILD_DIR}/META/version
+echo ${NAME} > ${BUILD_DIR}/META/app
+echo ${VERSION} > ${BUILD_DIR}/META/version
 
 echo "zipping"
 rm -rf ${NAME}*.tar.gz
