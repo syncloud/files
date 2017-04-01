@@ -40,7 +40,6 @@ cp -r ${DIR}/bin ${BUILD_DIR}
 cp -r ${DIR}/hooks ${BUILD_DIR}
 cp -r ${DIR}/templates ${BUILD_DIR}
 cp -r ${DIR}/www ${BUILD_DIR}
-cp -r ${DIR}/lib ${BUILD_DIR}
 
 mkdir ${BUILD_DIR}/META
 echo ${NAME} > ${BUILD_DIR}/META/app
