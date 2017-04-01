@@ -1,5 +1,7 @@
 #!/bin/bash -xe
 
+apt-get install -y python-dev
+
 wget https://bootstrap.pypa.io/get-pip.py
 python get-pip.py
 pip install coin
