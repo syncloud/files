@@ -8,14 +8,6 @@ import pytest
 import shutil
 
 from integration.util.ssh import run_scp, ssh_command, SSH, run_ssh, set_docker_ssh_port
-
-app_path = join(dirname(__file__), '..')
-sys.path.append(join(app_path, 'src'))
-
-lib_path = join(app_path, 'lib')
-libs = [abspath(join(lib_path, item)) for item in listdir(lib_path) if isdir(join(lib_path, item))]
-map(lambda x: sys.path.append(x), libs)
-
 import requests
 
 SYNCLOUD_INFO = 'syncloud.info'
@@ -37,6 +29,9 @@ def module_teardown():
     platform_log_dir = join(LOG_DIR, 'platform_log')
     os.mkdir(platform_log_dir)
     run_scp('root@localhost:/opt/data/platform/log/* {0}'.format(platform_log_dir), password=LOGS_SSH_PASSWORD)
+    app_log_dir = join(LOG_DIR, 'files_log')
+    os.mkdir(app_log_dir)
+    run_scp('root@localhost:/opt/data/files/log/* {0}'.format(app_log_dir), password=LOGS_SSH_PASSWORD)
 
     print('-------------------------------------------------------')
     print('syncloud docker image is running')
@@ -46,7 +41,7 @@ def module_teardown():
 
 @pytest.fixture(scope='module')
 def user_domain(auth):
-    email, password, domain, release, version, arch = auth
+    email, password, domain, release, _ = auth
     return 'files.{0}.{1}'.format(domain, SYNCLOUD_INFO)
 
 
@@ -62,7 +57,7 @@ def test_start(module_setup):
 
 
 def test_activate_device(auth):
-    email, password, domain, release, version, arch = auth
+    email, password, domain, release, _ = auth
 
     run_ssh('/opt/app/sam/bin/sam update --release {0}'.format(release), password=DEFAULT_DEVICE_PASSWORD)
     run_ssh('/opt/app/sam/bin/sam --debug upgrade platform', password=DEFAULT_DEVICE_PASSWORD)
@@ -75,8 +70,8 @@ def test_activate_device(auth):
     LOGS_SSH_PASSWORD = DEVICE_PASSWORD
 
 
-def test_install(auth):
-    __local_install(auth)
+def test_install(app_archive_path):
+    __local_install(app_archive_path)
 
 
 def test_remove(syncloud_session):
@@ -84,8 +79,8 @@ def test_remove(syncloud_session):
     assert response.status_code == 200, response.text
 
 
-def test_reinstall(auth):
-    __local_install(auth)
+def test_reinstall(app_archive_path):
+    __local_install(app_archive_path)
 
 def test_login():
     session = requests.session()
@@ -98,9 +93,8 @@ def test_browse_root():
     assert response.status_code == 200, response.text
 
 
-def __local_install(auth):
-    email, password, domain, release, version, arch = auth
-    run_scp('{0}/../files-{1}-{2}.tar.gz root@localhost:/'.format(DIR, version, arch), password=DEVICE_PASSWORD)
-    run_ssh('/opt/app/sam/bin/sam --debug install /files-{0}-{1}.tar.gz'.format(version, arch), password=DEVICE_PASSWORD)
+def __local_install(app_archive_path):
+    run_scp('{0} root@localhost:/app.tar.gz'.format(app_archive_path), password=DEVICE_PASSWORD)
+    run_ssh('/opt/app/sam/bin/sam --debug install /app.tar.gz', password=DEVICE_PASSWORD)
     set_docker_ssh_port(DEVICE_PASSWORD)
     time.sleep(3)
