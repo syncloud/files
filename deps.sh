@@ -1,6 +1,6 @@
 #!/bin/bash -xe
 
-apt-get install -y python-dev build-essential
+apt-get install -y python-dev build-essential libsasl2-dev libldap2-dev libssl-dev
 
 wget https://bootstrap.pypa.io/get-pip.py
 python get-pip.py
