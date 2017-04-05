@@ -1,5 +1,4 @@
 APP_NAME = 'files'
-USER_NAME = 'platform'
 SYSTEMD_UWSGI_NAME = 'files-uwsgi'
 SYSTEMD_NGINX_NAME = 'files-nginx'
 
