@@ -1,5 +1,4 @@
 APP_NAME = 'files'
-USER_NAME = 'platform'
 SYSTEMD_UWSGI_NAME = 'files-uwsgi'
 SYSTEMD_NGINX_NAME = 'files-nginx'
 
@@ -11,10 +10,6 @@ from syncloud_platform.gaplib import fs, linux, gen
 app = api.get_app_setup(APP_NAME)
 app_dir = app.get_install_dir()
 app_data_dir = app.get_data_dir()
-
-linux.useradd(USER_NAME)
-fs.chownpath(app_dir, USER_NAME, recursive=True)
-
 
 log_path = join(app_data_dir, 'log')
 
@@ -35,16 +30,12 @@ fs.makepath(scgi_temp_path)
 uwsgi_path = join(app_data_dir, 'uwsgi')
 fs.makepath(uwsgi_path)
 
-fs.createfile(join(uwsgi_path, 'files.wsgi.sock'))
-
 variables = {'app_dir': app_dir, 'app_data_dir': app_data_dir}
 
-templates_path = join(app_dir, 'templates')
+templates_path = join(app_dir, 'config.templates')
 config_path = join(app_dir, 'config')
 
 gen.generate_files(templates_path, config_path, variables)
-
-fs.chownpath(app_data_dir, USER_NAME, recursive=True)
 
 app.add_service(SYSTEMD_UWSGI_NAME)
 app.add_service(SYSTEMD_NGINX_NAME)

@@ -3,7 +3,6 @@ Description=Files uWSGI
 After=syslog.target
 
 [Service]
-User=platform
 ExecStart={{ app_dir }}/uwsgi/bin/uwsgi --ini {{ app_dir }}/config/uwsgi/files.ini
 Restart=always
 KillSignal=SIGQUIT
