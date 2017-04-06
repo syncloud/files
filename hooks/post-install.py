@@ -34,7 +34,7 @@ fs.createfile(join(uwsgi_path, 'files.wsgi.sock'))
 
 variables = {'app_dir': app_dir, 'app_data_dir': app_data_dir}
 
-templates_path = join(app_dir, 'templates')
+templates_path = join(app_dir, 'config.templates')
 config_path = join(app_dir, 'config')
 
 gen.generate_files(templates_path, config_path, variables)
