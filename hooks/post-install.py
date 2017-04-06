@@ -30,8 +30,6 @@ fs.makepath(scgi_temp_path)
 uwsgi_path = join(app_data_dir, 'uwsgi')
 fs.makepath(uwsgi_path)
 
-fs.createfile(join(uwsgi_path, 'files.wsgi.sock'))
-
 variables = {'app_dir': app_dir, 'app_data_dir': app_data_dir}
 
 templates_path = join(app_dir, 'config.templates')
