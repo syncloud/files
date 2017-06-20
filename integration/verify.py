@@ -7,7 +7,7 @@ import time
 import pytest
 import shutil
 
-from integration.util.ssh import run_scp, ssh_command, SSH, run_ssh, set_docker_ssh_port
+from integration.util.ssh import run_scp, run_ssh
 import requests
 
 SYNCLOUD_INFO = 'syncloud.info'
@@ -20,52 +20,41 @@ LOG_DIR = join(DIR, 'log')
 
 
 @pytest.fixture(scope="session")
-def module_setup(request):
-    request.addfinalizer(module_teardown)
+def module_setup(request, user_domain):
+    request.addfinalizer(lambda: module_teardown(user_domain))
 
 
-def module_teardown():
-    os.mkdir(LOG_DIR)
+def module_teardown(user_domain):
+
     platform_log_dir = join(LOG_DIR, 'platform_log')
     os.mkdir(platform_log_dir)
-    run_scp('root@localhost:/opt/data/platform/log/* {0}'.format(platform_log_dir), password=LOGS_SSH_PASSWORD)
-    run_scp('root@localhost:/var/log/sam.log {0}'.format(platform_log_dir), password=LOGS_SSH_PASSWORD)
+    run_scp('root@{0}:/opt/data/platform/log/* {1}'.format(user_domain, platform_log_dir), password=LOGS_SSH_PASSWORD)
+    run_scp('root@{0}:/var/log/sam.log {1}'.format(user_domain, platform_log_dir), password=LOGS_SSH_PASSWORD)
 
     
     app_log_dir = join(LOG_DIR, 'files_log')
     os.mkdir(app_log_dir)
-    run_scp('root@localhost:/opt/data/files/log/* {0}'.format(app_log_dir), password=LOGS_SSH_PASSWORD)
-
-    print('-------------------------------------------------------')
-    print('syncloud docker image is running')
-    print('connect using: {0}'.format(ssh_command(DEVICE_PASSWORD, SSH)))
-    print('-------------------------------------------------------')
-
-
-@pytest.fixture(scope='module')
-def user_domain(auth):
-    email, password, domain, release, _ = auth
-    return 'files.{0}.{1}'.format(domain, SYNCLOUD_INFO)
+    run_scp('root@{0}:/opt/data/files/log/* {1}'.format(user_domain, app_log_dir), password=LOGS_SSH_PASSWORD)
 
 
 @pytest.fixture(scope='function')
-def syncloud_session():
+def syncloud_session(device_host):
     session = requests.session()
-    session.post('http://localhost/rest/login', data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
+    session.post('http://{0}/rest/login'.format(device_host), data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
     return session
 
 
 def test_start(module_setup):
     shutil.rmtree(LOG_DIR, ignore_errors=True)
+    os.mkdir(LOG_DIR)
 
+def test_activate_device(auth, user_domain):
+    email, password, domain, release = auth
 
-def test_activate_device(auth):
-    email, password, domain, release, _ = auth
+    run_ssh(user_domain, '/opt/app/sam/bin/sam update --release {0}'.format(release), password=DEFAULT_DEVICE_PASSWORD)
+    run_ssh(user_domain, '/opt/app/sam/bin/sam --debug upgrade platform', password=DEFAULT_DEVICE_PASSWORD)
 
-    run_ssh('/opt/app/sam/bin/sam update --release {0}'.format(release), password=DEFAULT_DEVICE_PASSWORD)
-    run_ssh('/opt/app/sam/bin/sam --debug upgrade platform', password=DEFAULT_DEVICE_PASSWORD)
-
-    response = requests.post('http://localhost:81/rest/activate',
+    response = requests.post('http://{0}:81/rest/activate'.format(user_domain),
                              data={'main_domain': SYNCLOUD_INFO, 'redirect_email': email, 'redirect_password': password,
                                    'user_domain': domain, 'device_username': DEVICE_USER, 'device_password': DEVICE_PASSWORD})
     assert response.status_code == 200, response.text
@@ -73,31 +62,30 @@ def test_activate_device(auth):
     LOGS_SSH_PASSWORD = DEVICE_PASSWORD
 
 
-def test_install(app_archive_path):
-    __local_install(app_archive_path)
+def test_install(app_archive_path, device_host):
+    __local_install(app_archive_path, device_host)
 
 
-def test_remove(syncloud_session):
-    response = syncloud_session.get('http://localhost/rest/remove?app_id=files', allow_redirects=False)
+def test_remove(syncloud_session, device_host):
+    response = syncloud_session.get('http://{0}/rest/remove?app_id=files'.format(device_host), allow_redirects=False)
     assert response.status_code == 200, response.text
 
 
-def test_reinstall(app_archive_path):
-    __local_install(app_archive_path)
+def test_reinstall(app_archive_path, device_host):
+    __local_install(app_archive_path, device_host)
 
 def test_login():
-    session = requests.session()
-    response = session.post('http://localhost:1111/rest/login', data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
+    session = requests.session(user_domain)
+    response = session.post('http://{0}/rest/login'.format(user_domain), data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
     assert response.status_code == 200, response.text
 
-def test_browse_root():
+def test_browse_root(user_domain):
     session = requests.session()
-    response = session.post('http://localhost:1111/rest/files', data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
+    response = session.post('http://{0}/rest/files'.format(user_domain), data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
     assert response.status_code == 200, response.text
 
 
-def __local_install(app_archive_path):
-    run_scp('{0} root@localhost:/app.tar.gz'.format(app_archive_path), password=DEVICE_PASSWORD)
-    run_ssh('/opt/app/sam/bin/sam --debug install /app.tar.gz', password=DEVICE_PASSWORD)
-    set_docker_ssh_port(DEVICE_PASSWORD)
+def __local_install(app_archive_path, device_host):
+    run_scp('{0} root@{1}:/app.tar.gz'.format(app_archive_path, device_host), password=DEVICE_PASSWORD)
+    run_ssh(device_host, '/opt/app/sam/bin/sam --debug install /app.tar.gz', password=DEVICE_PASSWORD)
     time.sleep(3)
