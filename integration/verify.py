@@ -75,7 +75,7 @@ def test_reinstall(app_archive_path, device_host):
     __local_install(app_archive_path, device_host)
 
 def test_login(user_domain):
-    session = requests.session(user_domain)
+    session = requests.session()
     response = session.post('http://{0}/rest/login'.format(user_domain), data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
     assert response.status_code == 200, response.text
 
