@@ -9,14 +9,14 @@ apps:
     stop-command: bin/service.nginx.sh stop
     reload-command: bin/service.nginx.sh reload
   uwsgi:
-    command: bin/service.uwsgi.sh
+    command: bin/service.uwsgi.sh files
     daemon: notify
     plugs:
     - network
     - network-bind
     restart-condition: always
 confinement: strict
-description: Syncloud Platform
+description: Files
 grade: stable
-name: platform
-summary: Syncloud Platform
+name: files
+summary: Files
