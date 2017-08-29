@@ -5,13 +5,14 @@ cd ${DIR}
 
 NAME=files
 
-if [[ -z "$1" ]]; then
-    echo "usage $0 version"
+if [[ -z "$2" ]]; then
+    echo "usage $0 version installer"
     exit 1
 fi
 
 ARCH=$(uname -m)
 VERSION=$1
+INSTALLER=$2
 
 BUILD_DIR=${DIR}/build/${NAME}
 rm -rf build
