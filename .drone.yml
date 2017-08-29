@@ -1,8 +1,8 @@
-platform: ${platform}
+platform: linux/${arch}
 
 clone:
   git:
-    image: ${git}
+    image: syncloud/drone-git-${arch}
     depth: 50
 
 pipeline:
@@ -21,25 +21,21 @@ pipeline:
     image: syncloud/files-build-deps-${arch}
     commands:
       - VERSION=$(cat version)
-      - NAME=files${separator}$${VERSION}${separator}${installer_arch}.${installer_ext}
-      - ./integration/test-docker.sh teamcity@syncloud.it password teamcity $NAME ${installer_version} master ${integration_test} ${installer} device
+      - ./integration/test-docker.sh teamcity@syncloud.it password build $VERSION master ${installer} device
 
   upload:
     image: syncloud/files-build-deps-${arch}
     secrets: [AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY]
     commands:
       - VERSION=$(cat version)
-      - ./upload.sh $DRONE_BRANCH $VERSION
-    when:
-      matrix:
-        installer: sam
+      - ./upload.sh $DRONE_BRANCH $VERSION ${installer}
 
   ci-artifact:
     image: syncloud/files-build-deps-${arch}
     secrets: [ARTIFACT_SSH_KEY]
     commands:
-      - ./upload-artifact.sh integration/log $DRONE_BUILD_NUMBER-${installer}-${arch}
-      - ./upload-artifact.sh integration/screenshot $DRONE_BUILD_NUMBER-${installer}-${arch}
+      - ./upload-artifact.sh integration/log $DRONE_BUILD_NUMBER-${installer}-${dpkg --print-architecture}
+      - ./upload-artifact.sh integration/screenshot $DRONE_BUILD_NUMBER-${installer}-${dpkg --print-architecture}
     when:
       status: [ failure, success ] 
 
@@ -51,45 +47,9 @@ services:
       - /var/run/dbus:/var/run/dbus
  
 matrix:
-  include:
-    - platform: linux/arm
-      git: syncloud/armhf-drone-git
-      arch: armhf
-      installer: sam
-      installer_version: 89
-      installer_arch: armv7l
-      installer_ext: tar.gz
-      separator: "-"
-      integration_test: verify
-      
-    - platform: linux/amd64
-      git: plugins/git
-      arch: amd64
-      installer: sam
-      installer_version: 89
-      installer_arch: x86_64
-      installer_ext: tar.gz
-      separator: "-"
-      integration_test: verify
-
-# disable snap until migration from Team City is done
-
-#    - platform: linux/arm
-#      git: syncloud/armhf-drone-git
-#      arch: armhf
-#      installer: snapd
-#      installer_version: 170523
-#      installer_arch: armhf
-#      installer_ext: snap
-#      separator: _
-#      integration_test: verify
-
-#    - platform: linux/amd64
-#      git: plugins/git
-#      arch: amd64
-#      installer: snapd
-#      installer_version: 170523
-#      installer_arch: amd64
-#      installer_ext: snap
-#      separator: _
-#      integration_test: all
+  arch:
+    - arm
+    - amd64
+  installer:
+    - sam
+    - snapd
