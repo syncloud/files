@@ -43,5 +43,5 @@ systemctl enable snapd.socket
 systemctl start snapd.service snapd.socket
 
 snap --version
-
+snap install platform
 

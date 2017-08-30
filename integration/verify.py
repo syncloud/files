@@ -51,9 +51,6 @@ def test_start(module_setup):
 def test_activate_device(auth, user_domain):
     email, password, domain, release = auth
 
-    run_ssh(user_domain, '/opt/app/sam/bin/sam update --release {0}'.format(release), password=DEFAULT_DEVICE_PASSWORD)
-    run_ssh(user_domain, '/opt/app/sam/bin/sam --debug upgrade platform', password=DEFAULT_DEVICE_PASSWORD)
-
     response = requests.post('http://{0}:81/rest/activate'.format(user_domain),
                              data={'main_domain': SYNCLOUD_INFO, 'redirect_email': email, 'redirect_password': password,
                                    'user_domain': domain, 'device_username': DEVICE_USER, 'device_password': DEVICE_PASSWORD})
