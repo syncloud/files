@@ -39,11 +39,7 @@ cd ${DIR}
 
 echo ${APP_ARCHIVE_PATH}
 
-if [ "$ARCH" == "x86_64" ]; then
-    TEST_SUITE="verify.py test-ui.py"
-else
-    TEST_SUITE=verify.py
-fi
+TEST_SUITE=verify.py
 
 cd ${DIR}
 
