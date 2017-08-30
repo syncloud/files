@@ -8,6 +8,8 @@ import pytest
 import shutil
 
 from integration.util.ssh import run_scp, run_ssh
+from integration.util.helper import local_install, wait_for_sam, wait_for_rest, local_remove
+
 import requests
 
 SYNCLOUD_INFO = 'syncloud.info'
@@ -59,8 +61,8 @@ def test_activate_device(auth, user_domain):
     LOGS_SSH_PASSWORD = DEVICE_PASSWORD
 
 
-def test_install(app_archive_path, device_host):
-    __local_install(app_archive_path, device_host)
+def test_install(app_archive_path, device_host, installer):
+    local_install(device_host, DEFAULT_DEVICE_PASSWORD, app_archive_path, installer)
 
 
 def test_remove(syncloud_session, device_host):
@@ -68,8 +70,8 @@ def test_remove(syncloud_session, device_host):
     assert response.status_code == 200, response.text
 
 
-def test_reinstall(app_archive_path, device_host):
-    __local_install(app_archive_path, device_host)
+def test_reinstall(app_archive_path, device_host, installer):
+    local_install(device_host, DEFAULT_DEVICE_PASSWORD, app_archive_path, installer)
 
 def test_login(user_domain):
     session = requests.session()
@@ -80,9 +82,3 @@ def test_browse_root(user_domain):
     session = requests.session()
     response = session.post('http://{0}/rest/files'.format(user_domain), data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
     assert response.status_code == 200, response.text
-
-
-def __local_install(app_archive_path, device_host):
-    run_scp('{0} root@{1}:/app.tar.gz'.format(app_archive_path, device_host), password=DEVICE_PASSWORD)
-    run_ssh(device_host, '/opt/app/sam/bin/sam --debug install /app.tar.gz', password=DEVICE_PASSWORD)
-    time.sleep(3)
