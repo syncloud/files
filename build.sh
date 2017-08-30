@@ -15,6 +15,7 @@ VERSION=$1
 INSTALLER=$2
 
 BUILD_DIR=${DIR}/build/${NAME}
+SNAP_DIR=${DIR}/build/snap
 rm -rf build
 mkdir -p ${BUILD_DIR}
 
