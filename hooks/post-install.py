@@ -39,6 +39,3 @@ gen.generate_files(templates_path, config_path, variables)
 
 app.add_service(SYSTEMD_UWSGI_NAME)
 app.add_service(SYSTEMD_NGINX_NAME)
-
-app.register_web(1111)
-

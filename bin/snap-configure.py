@@ -26,5 +26,3 @@ data_dirs = [
 
 for data_dir in data_dirs:
     fs.makepath(data_dir)
-
-app.register_web(1111)
