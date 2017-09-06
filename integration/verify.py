@@ -76,7 +76,7 @@ def test_reinstall(app_archive_path, device_host, installer):
 
 def test_login(device_domain):
     session = requests.session()
-    response = session.post('http://{0}/rest/login'.format(user_domain), data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
+    response = session.post('http://{0}/rest/login'.format(device_domain), data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
     assert response.status_code == 200, response.text
 
 def test_browse_root(user_domain):
