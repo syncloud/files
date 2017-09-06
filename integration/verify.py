@@ -37,6 +37,7 @@ def module_teardown(user_domain):
     app_log_dir = join(LOG_DIR, 'files_log')
     os.mkdir(app_log_dir)
     run_scp('root@{0}:/opt/data/files/log/* {1}'.format(user_domain, app_log_dir), password=LOGS_SSH_PASSWORD, throw=False)
+    run_ssh(user_domain, 'journalctl | tail -200', password=LOGS_SSH_PASSWORD, throw=False)
 
 
 @pytest.fixture(scope='function')

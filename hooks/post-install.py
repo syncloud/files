@@ -34,7 +34,7 @@ fs.makepath(uwsgi_path)
 variables = {'app_dir': app_dir, 'app_data': app_data_dir}
 
 templates_path = join(app_dir, 'config.templates')
-config_path = join(app_dir, 'config')
+config_path = join(app_data_dir, 'config')
 
 gen.generate_files(templates_path, config_path, variables)
 
