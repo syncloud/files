@@ -5,7 +5,7 @@ After=files-uwsgi.service
 
 [Service]
 Type=forking
-PIDFile={{ app_data_dir }}/nginx/nginx.pid
+PIDFile={{ app_data }}/nginx/nginx.pid
 ExecStartPre={{ app_dir }}/nginx/sbin/nginx -t -c {{ app_dir }}/config/nginx/nginx.conf -p {{ app_dir }}/nginx
 ExecStart={{ app_dir }}/nginx/sbin/nginx -c {{ app_dir }}/config/nginx/nginx.conf -p {{ app_dir }}/nginx
 ExecReload={{ app_dir }}/nginx/sbin/nginx -c {{ app_dir }}/config/nginx/nginx.conf -s reload -p {{ app_dir }}/nginx

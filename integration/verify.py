@@ -40,9 +40,9 @@ def module_teardown(user_domain):
 
 
 @pytest.fixture(scope='function')
-def syncloud_session(device_host):
+def syncloud_session(device_domain):
     session = requests.session()
-    session.post('http://{0}/rest/login'.format(device_host), data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
+    session.post('http://{0}/rest/login'.format(device_domain), data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
     return session
 
 
@@ -50,10 +50,10 @@ def test_start(module_setup):
     shutil.rmtree(LOG_DIR, ignore_errors=True)
     os.mkdir(LOG_DIR)
 
-def test_activate_device(auth, user_domain):
+def test_activate_device(auth, device_domain):
     email, password, domain, release = auth
 
-    response = requests.post('http://{0}:81/rest/activate'.format(user_domain),
+    response = requests.post('http://{0}:81/rest/activate'.format(device_domain),
                              data={'main_domain': SYNCLOUD_INFO, 'redirect_email': email, 'redirect_password': password,
                                    'user_domain': domain, 'device_username': DEVICE_USER, 'device_password': DEVICE_PASSWORD})
     assert response.status_code == 200, response.text
@@ -65,8 +65,8 @@ def test_install(app_archive_path, device_host, installer):
     local_install(device_host, DEFAULT_DEVICE_PASSWORD, app_archive_path, installer)
 
 
-def test_remove(syncloud_session, device_host):
-    response = syncloud_session.get('http://{0}/rest/remove?app_id=files'.format(device_host), allow_redirects=False)
+def test_remove(syncloud_session, device_domain):
+    response = syncloud_session.get('http://{0}/rest/remove?app_id=files'.format(device_domain), allow_redirects=False)
     assert response.status_code == 200, response.text
 
 

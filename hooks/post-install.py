@@ -7,6 +7,7 @@ from os.path import join
 from syncloud_platform.application import api
 from syncloud_platform.gaplib import fs, linux, gen
 
+
 app = api.get_app_setup(APP_NAME)
 app_dir = app.get_install_dir()
 app_data_dir = app.get_data_dir()
@@ -30,7 +31,7 @@ fs.makepath(scgi_temp_path)
 uwsgi_path = join(app_data_dir, 'uwsgi')
 fs.makepath(uwsgi_path)
 
-variables = {'app_dir': app_dir, 'app_data_dir': app_data_dir}
+variables = {'app_dir': app_dir, 'app_data': app_data_dir}
 
 templates_path = join(app_dir, 'config.templates')
 config_path = join(app_dir, 'config')
