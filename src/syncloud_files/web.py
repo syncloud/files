@@ -18,8 +18,8 @@ from syncloud_files.config import BrowserConfig
 from syncloud_files.browser import Browser
 
 
-def create_web_app(app_dir):
-    config = BrowserConfig(app_dir)
+def create_web_app(data_dir):
+    config = BrowserConfig(data_dir)
 
     logger.init(logging.INFO, False, join(config.get_browser_log()))
 
