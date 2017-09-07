@@ -84,5 +84,5 @@ def test_browse_root(user_domain):
     response = session.post('http://{0}/rest/login'.format(user_domain), data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
     assert response.status_code == 200, response.text
     
-    response = session.get('http://{0}/rest/files'.format(user_domain))
+    response = session.get('http://{0}/rest/files/'.format(user_domain))
     assert response.status_code == 200, response.text
