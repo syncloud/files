@@ -21,6 +21,13 @@ DIR = dirname(__file__)
 LOG_DIR = join(DIR, 'log')
 
 
+@pytest.fixture(scope='function')
+def syncloud_session(device_domain):
+    session = requests.session()
+    session.post('http://{0}/rest/login'.format(device_domain), data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
+    return session
+
+
 @pytest.fixture(scope="session")
 def module_setup(request, user_domain):
     request.addfinalizer(lambda: module_teardown(user_domain))
@@ -32,7 +39,6 @@ def module_teardown(user_domain):
     os.mkdir(platform_log_dir)
     run_scp('root@{0}:/opt/data/platform/log/* {1}'.format(user_domain, platform_log_dir), password=LOGS_SSH_PASSWORD, throw=False)
     run_scp('root@{0}:/var/log/sam.log {1}'.format(user_domain, platform_log_dir), password=LOGS_SSH_PASSWORD, throw=False)
-
     
     app_log_dir = join(LOG_DIR, 'files_log')
     os.mkdir(app_log_dir)
@@ -40,16 +46,10 @@ def module_teardown(user_domain):
     run_ssh(user_domain, 'journalctl | tail -200', password=LOGS_SSH_PASSWORD, throw=False)
 
 
-@pytest.fixture(scope='function')
-def syncloud_session(device_domain):
-    session = requests.session()
-    session.post('http://{0}/rest/login'.format(device_domain), data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
-    return session
-
-
 def test_start(module_setup):
     shutil.rmtree(LOG_DIR, ignore_errors=True)
     os.mkdir(LOG_DIR)
+
 
 def test_activate_device(auth, device_domain):
     email, password, domain, release = auth
