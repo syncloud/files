@@ -62,8 +62,8 @@ def test_activate_device(auth, device_domain):
     LOGS_SSH_PASSWORD = DEVICE_PASSWORD
 
 
-def test_install(app_archive_path, device_host, installer):
-    local_install(device_host, DEFAULT_DEVICE_PASSWORD, app_archive_path, installer)
+def test_install(app_archive_path, device_domain, installer):
+    local_install(device_domain, DEFAULT_DEVICE_PASSWORD, app_archive_path, installer)
 
 
 def test_remove(syncloud_session, device_domain):
@@ -71,8 +71,8 @@ def test_remove(syncloud_session, device_domain):
     assert response.status_code == 200, response.text
 
 
-def test_reinstall(app_archive_path, device_host, installer):
-    local_install(device_host, DEFAULT_DEVICE_PASSWORD, app_archive_path, installer)
+def test_reinstall(app_archive_path, device_domain, installer):
+    local_install(device_domain, DEFAULT_DEVICE_PASSWORD, app_archive_path, installer)
 
 def test_login(user_domain):
     session = requests.session()
