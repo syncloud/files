@@ -63,10 +63,11 @@ def test_activate_device(auth, device_domain):
 
 
 def test_activate_password(device_domain):
-    print('activate password')
-    run_ssh(device_domain, 'date', password=DEVICE_PASSWORD)
     print('default password')
     run_ssh(device_domain, 'date', password=DEFAULT_DEVICE_PASSWORD, throw=False)
+    print('activate password')
+    run_ssh(device_domain, 'date', password=DEVICE_PASSWORD)
+    
 
 def test_install(app_archive_path, device_domain, installer):
     local_install(device_domain, DEFAULT_DEVICE_PASSWORD, app_archive_path, installer)
