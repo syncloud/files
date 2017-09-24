@@ -38,8 +38,5 @@ config_path = join(app_data_dir, 'config')
 
 gen.generate_files(templates_path, config_path, variables)
 
-# cleanup old app web mapping mechanism
-app.unregister_web()
-
 app.add_service(SYSTEMD_UWSGI_NAME)
 app.add_service(SYSTEMD_NGINX_NAME)
