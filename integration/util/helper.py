@@ -12,6 +12,7 @@ SNAP_INSTALL = '{0} install --devmode'.format(SNAP)
 
 
 def local_install(host, password, app_archive_path, installer):
+    run_ssh(host, 'ls -la /', password=password)
     _, app_archive = split(app_archive_path)
     run_scp('{0} root@{1}:/'.format(app_archive_path, host), password=password, retries=3)
     cmd = SAM_INSTALL
