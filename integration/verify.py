@@ -62,6 +62,12 @@ def test_activate_device(auth, device_domain):
     LOGS_SSH_PASSWORD = DEVICE_PASSWORD
 
 
+def test_activate_password(device_domain):
+    print('activate password')
+    run_ssh(user_domain, 'date', password=DEVICE_PASSWORD, throw=False)
+    print('default password')
+    run_ssh(user_domain, 'date', password=DEFAULT_DEVICE_PASSWORD, throw=False)
+
 def test_install(app_archive_path, device_domain, installer):
     local_install(device_domain, DEFAULT_DEVICE_PASSWORD, app_archive_path, installer)
 
