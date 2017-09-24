@@ -70,7 +70,7 @@ def test_activate_password(device_domain):
     
 
 def test_install(app_archive_path, device_domain, installer):
-    local_install(device_domain, DEFAULT_DEVICE_PASSWORD, app_archive_path, installer)
+    local_install(device_domain, DEVICE_PASSWORD, app_archive_path, installer)
 
 
 def test_remove(syncloud_session, device_domain):
@@ -79,7 +79,7 @@ def test_remove(syncloud_session, device_domain):
 
 
 def test_reinstall(app_archive_path, device_domain, installer):
-    local_install(device_domain, DEFAULT_DEVICE_PASSWORD, app_archive_path, installer)
+    local_install(device_domain, DEVICE_PASSWORD, app_archive_path, installer)
 
 def test_login(user_domain):
     session = requests.session()
