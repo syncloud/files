@@ -64,7 +64,7 @@ def test_activate_device(auth, device_domain):
 
 def test_activate_password(device_domain):
     print('activate password')
-    run_ssh(user_domain, 'date', password=DEVICE_PASSWORD, throw=False)
+    run_ssh(user_domain, 'date', password=DEVICE_PASSWORD)
     print('default password')
     run_ssh(user_domain, 'date', password=DEFAULT_DEVICE_PASSWORD, throw=False)
 
