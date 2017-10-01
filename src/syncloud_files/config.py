@@ -6,10 +6,10 @@ BROWSER_CONFIG_NAME = 'files.cfg'
 
 class BrowserConfig:
 
-    def __init__(self, app_dir):
-        self.app_dir = app_dir
-        self.config_dir = join(app_dir, 'config')
-        self.parser = ConfigParser(defaults={'app_dir': app_dir})
+    def __init__(self, data_dir):
+        self.data_dir = data_dir
+        self.config_dir = join(data_dir, 'config')
+        self.parser = ConfigParser()
         self.filename = join(self.config_dir, BROWSER_CONFIG_NAME)
         self.parser.read(self.filename)
 
