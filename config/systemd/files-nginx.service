@@ -4,7 +4,7 @@ Requires=files-uwsgi.service
 After=files-uwsgi.service
 
 [Service]
-Type=forking
+Type=simple
 PIDFile={{ app_data }}/nginx/nginx.pid
 ExecStartPre={{ app_dir }}/nginx/sbin/nginx -t -c {{ app_data }}/config/nginx/nginx.conf -p {{ app_dir }}/nginx
 ExecStart={{ app_dir }}/nginx/sbin/nginx -c {{ app_data }}/config/nginx/nginx.conf -p {{ app_dir }}/nginx
