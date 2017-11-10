@@ -6,6 +6,7 @@ After=files-uwsgi.service
 [Service]
 Type=simple
 PIDFile={{ app_data }}/nginx/nginx.pid
+ExecStartPre=/bin/rm -f {{ app_data }}/web.socket
 ExecStartPre={{ app_dir }}/nginx/sbin/nginx -t -c {{ app_data }}/config/nginx/nginx.conf -p {{ app_dir }}/nginx
 ExecStart={{ app_dir }}/nginx/sbin/nginx -c {{ app_data }}/config/nginx/nginx.conf -p {{ app_dir }}/nginx
 ExecReload={{ app_dir }}/nginx/sbin/nginx -c {{ app_data }}/config/nginx/nginx.conf -s reload -p {{ app_dir }}/nginx
