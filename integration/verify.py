@@ -6,9 +6,9 @@ import time
 
 import pytest
 import shutil
-import syncloudlib
+
 from syncloudlib.integration.ssh import run_scp, run_ssh
-from syncloudlib.integration.installer import local_install, wait_for_sam, wait_for_rest, local_remove
+from syncloudlib.integration.installer import local_install, wait_for_sam, wait_for_rest, local_remove, get_platform_data_dir, get_data_dir, get_app_dir, get_service_prefix, get_ssh_env_vars
 
 import requests
 
@@ -24,26 +24,26 @@ APP='files'
 
 @pytest.fixture(scope="session")
 def platform_data_dir(installer):
-    return syncloudlib.integration.installer.platform_data_dir(installer)
+    return get_platform_data_dir(installer)
         
 @pytest.fixture(scope="session")
 def data_dir(installer):
-    return syncloudlib.integration.installer.data_dir(installer, APP)
+    return get_data_dir(installer, APP)
          
 
 @pytest.fixture(scope="session")
 def app_dir(installer):
-    return syncloudlib.integration.installer.app_dir(installer, APP)
+    return get_app_dir(installer, APP)
 
 
 @pytest.fixture(scope="session")
 def service_prefix(installer):
-    return syncloudlib.integration.installer.service_prefix(installer)
+    return get_service_prefix(installer)
 
 
 @pytest.fixture(scope="session")
 def ssh_env_vars(installer):
-    return syncloudlib.integration.installer.ssh_env_vars(installer)
+    return get_ssh_env_vars(installer)
 
 
 @pytest.fixture(scope='function')
