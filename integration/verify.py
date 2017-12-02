@@ -54,8 +54,8 @@ def syncloud_session(device_domain):
 
 
 @pytest.fixture(scope="session")
-def module_setup(request, user_domain, platform_data_dir):
-    request.addfinalizer(lambda: module_teardown(user_domain, platform_data_dir))
+def module_setup(request, user_domain, platform_data_dir, data_dir):
+    request.addfinalizer(lambda: module_teardown(user_domain, platform_data_dir, data_dir))
 
 
 def module_teardown(user_domain, platform_data_dir, data_dir):
