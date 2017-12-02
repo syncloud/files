@@ -4,7 +4,7 @@ Requires=files-uwsgi.service
 After=files-uwsgi.service
 
 [Service]
-Type=forking
+Type=notify
 Environment=SNAP_COMMON={{ app_data }}
 PIDFile={{ app_data }}/nginx/nginx.pid
 ExecStart={{ app_dir }}/bin/service.nginx.sh start

@@ -1,7 +1,7 @@
 apps:
   nginx:
     command: bin/service.nginx.sh start
-    daemon: forking
+    daemon: notify
     plugs:
     - network
     - network-bind
