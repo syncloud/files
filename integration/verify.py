@@ -7,8 +7,8 @@ import time
 import pytest
 import shutil
 
-from integration.util.ssh import run_scp, run_ssh
-from integration.util.helper import local_install, wait_for_sam, wait_for_rest, local_remove
+from syncloudlib.integration.ssh import run_scp, run_ssh
+from syncloudlib.integration.installer import local_install, wait_for_sam, wait_for_rest, local_remove
 
 import requests
 
