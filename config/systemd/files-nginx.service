@@ -4,7 +4,7 @@ Requires=files-uwsgi.service
 After=files-uwsgi.service
 
 [Service]
-Type=fprking
+Type=forking
 Environment=SNAP_COMMON={{ app_data }}
 PIDFile={{ app_data }}/nginx/nginx.pid
 ExecStartPre={{ app_dir }}/bin/service.nginx.sh pre-start
