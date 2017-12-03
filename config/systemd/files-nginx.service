@@ -7,7 +7,7 @@ After=files-uwsgi.service
 Type=forking
 Environment=SNAP_COMMON={{ app_data }}
 PIDFile={{ app_data }}/nginx/nginx.pid
-ExecStartPre={{ app_dir }}/bin/service.nginx.sh pre-start
+#ExecStartPre={{ app_dir }}/bin/service.nginx.sh pre-start
 ExecStart={{ app_dir }}/bin/service.nginx.sh start
 ExecStartPost={{ app_dir }}/bin/service.nginx.sh post-start
 ExecReload={{ app_dir }}/bin/service.nginx.sh reload
