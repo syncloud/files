@@ -10,10 +10,10 @@ fi
 case $1 in
 pre-start)
     /bin/rm -f ${SNAP_COMMON}/web.socket
-    $DIR/nginx/sbin/nginx -t -c ${SNAP_COMMON}/config/nginx/nginx.conf -p $DIR/nginx
+    exec $DIR/nginx/sbin/nginx -t -c ${SNAP_COMMON}/config/nginx/nginx.conf -p $DIR/nginx -g 'error_log ${SNAP_COMMON}/log/nginx_error.log warn;'
     ;;
 start)
-    exec $DIR/nginx/sbin/nginx -c ${SNAP_COMMON}/config/nginx/nginx.conf -p $DIR/nginx
+    exec $DIR/nginx/sbin/nginx -c ${SNAP_COMMON}/config/nginx/nginx.conf -p $DIR/nginx -g 'error_log ${SNAP_COMMON}/log/nginx_error.log warn;'
     ;;
 post-start)
     timeout 5 /bin/bash -c 'until [ -f ${SNAP_COMMON}/web.socket ]; do sleep 1; done'
