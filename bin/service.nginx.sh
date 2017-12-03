@@ -8,15 +8,15 @@ if [[ -z "$1" ]]; then
 fi
 
 case $1 in
-start)
+pre-start)
     /bin/rm -f ${SNAP_COMMON}/web.socket
     $DIR/nginx/sbin/nginx -t -c ${SNAP_COMMON}/config/nginx/nginx.conf -p $DIR/nginx
-    $DIR/nginx/sbin/nginx -c ${SNAP_COMMON}/config/nginx/nginx.conf -p $DIR/nginx &
-    echo "waiting for socket"
+    ;;
+start)
+    exec $DIR/nginx/sbin/nginx -c ${SNAP_COMMON}/config/nginx/nginx.conf -p $DIR/nginx
+    ;;
+post-start)
     timeout 5 /bin/bash -c 'until [ -f ${SNAP_COMMON}/web.socket ]; do sleep 1; done'
-    echo "ready"
-    systemd-notify --ready
-    wait
     ;;
 reload)
     $DIR/nginx/sbin/nginx -c ${SNAP_COMMON}/config/nginx/nginx.conf -s reload -p $DIR/nginx
