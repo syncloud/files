@@ -12,7 +12,9 @@ start)
     /bin/rm -f ${SNAP_COMMON}/web.socket
     $DIR/nginx/sbin/nginx -t -c ${SNAP_COMMON}/config/nginx/nginx.conf -p $DIR/nginx
     $DIR/nginx/sbin/nginx -c ${SNAP_COMMON}/config/nginx/nginx.conf -p $DIR/nginx &
+    echo "waiting for socket"
     timeout 5 /bin/bash -c 'until [ -f ${SNAP_COMMON}/web.socket ]; do sleep 1; done'
+    echo "ready"
     systemd-notify --ready
     wait
     ;;
