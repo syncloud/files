@@ -5,6 +5,7 @@ After=files-uwsgi.service
 
 [Service]
 Type=notify
+NotifyAccess=all
 Environment=SNAP_COMMON={{ app_data }}
 PIDFile={{ app_data }}/nginx/nginx.pid
 ExecStart={{ app_dir }}/bin/service.nginx.sh start
