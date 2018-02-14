@@ -4,13 +4,14 @@ Requires=files-uwsgi.service
 After=files-uwsgi.service
 
 [Service]
-Type=simple
+Type=forking
+Environment=SNAP_COMMON={{ app_data }}
 PIDFile={{ app_data }}/nginx/nginx.pid
-ExecStartPre=/bin/rm -f {{ app_data }}/web.socket
-ExecStartPre={{ app_dir }}/nginx/sbin/nginx -t -c {{ app_data }}/config/nginx/nginx.conf -p {{ app_dir }}/nginx
-ExecStart={{ app_dir }}/nginx/sbin/nginx -c {{ app_data }}/config/nginx/nginx.conf -p {{ app_dir }}/nginx
-ExecReload={{ app_dir }}/nginx/sbin/nginx -c {{ app_data }}/config/nginx/nginx.conf -s reload -p {{ app_dir }}/nginx
-ExecStop={{ app_dir }}/nginx/sbin/nginx -c {{ app_data }}/config/nginx/nginx.conf -s stop -p {{ app_dir }}/nginx
+ExecStartPre={{ app_dir }}/bin/service.nginx.sh pre-start
+ExecStart={{ app_dir }}/bin/service.nginx.sh start
+ExecStartPost={{ app_dir }}/bin/service.nginx.sh post-start
+ExecReload={{ app_dir }}/bin/service.nginx.sh reload
+ExecStop={{ app_dir }}/bin/service.nginx.sh stop
 
 [Install]
 WantedBy=multi-user.target

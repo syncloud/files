@@ -1,7 +1,7 @@
 apps:
   nginx:
     command: bin/service.nginx.sh start
-    daemon: simple
+    daemon: forking
     plugs:
     - network
     - network-bind
