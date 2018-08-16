@@ -5,7 +5,7 @@ from os.path import dirname, join
 import pytest
 import requests
 from syncloudlib.integration.installer import local_install, get_data_dir, get_app_dir, get_service_prefix, \
-    get_ssh_env_vars
+    get_ssh_env_vars, wait_for_sam
 from syncloudlib.integration.ssh import run_scp, run_ssh
 
 SYNCLOUD_INFO = 'syncloud.info'
@@ -111,6 +111,7 @@ def test_remove(syncloud_session, device_domain):
                                     allow_redirects=False,
                                     verify=False)
     assert response.status_code == 200, response.text
+    wait_for_sam(device_domain, syncloud_session)
 
 
 def test_reinstall(app_archive_path, device_domain, installer):
