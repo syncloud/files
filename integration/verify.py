@@ -111,7 +111,7 @@ def test_remove(syncloud_session, device_domain):
                                     allow_redirects=False,
                                     verify=False)
     assert response.status_code == 200, response.text
-    wait_for_sam(device_domain, syncloud_session)
+    wait_for_sam(syncloud_session, device_domain)
 
 
 def test_reinstall(app_archive_path, device_domain, installer):
