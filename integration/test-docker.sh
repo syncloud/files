@@ -15,7 +15,7 @@ ARCH=$(uname -m)
 VERSION=$4
 RELEASE=$5
 INSTALLER=$6
-DOMAIN=$3-${ARCH}-${DRONE_BRANCH}-${INSTALLER}
+DOMAIN=$3-${ARCH}-${DRONE_BRANCH}
 DEVICE_HOST=$7
 
 APP=files
@@ -28,11 +28,7 @@ else
     SNAP_ARCH=armhf
 fi
 
-if [ $INSTALLER == "snapd" ]; then
-    ARCHIVE=${APP}_${VERSION}_${SNAP_ARCH}.snap
-else
-    ARCHIVE=${APP}-${VERSION}-${ARCH}.tar.gz
-fi
+ARCHIVE=${APP}_${VERSION}_${SNAP_ARCH}.snap
 APP_ARCHIVE_PATH=$(realpath "$ARCHIVE")
 
 cd ${DIR}

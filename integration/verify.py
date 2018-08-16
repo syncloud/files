@@ -49,7 +49,9 @@ def ssh_env_vars(installer):
 @pytest.fixture(scope='function')
 def syncloud_session(device_domain):
     session = requests.session()
-    session.post('http://{0}/rest/login'.format(device_domain), data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
+    session.post('https://{0}/rest/login'.format(device_domain),
+                 data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD},
+                 verify=False)
     return session
 
 
@@ -99,7 +101,9 @@ def test_install(app_archive_path, device_domain, installer):
 
 
 def test_remove(syncloud_session, device_domain):
-    response = syncloud_session.get('http://{0}/rest/remove?app_id=files'.format(device_domain), allow_redirects=False)
+    response = syncloud_session.get('https://{0}/rest/remove?app_id=files'.format(device_domain),
+                                    allow_redirects=False,
+                                    verify=False)
     assert response.status_code == 200, response.text
 
 
@@ -108,13 +112,18 @@ def test_reinstall(app_archive_path, device_domain, installer):
 
 def test_login(user_domain):
     session = requests.session()
-    response = session.post('http://{0}/rest/login'.format(user_domain), data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
+    response = session.post('https://{0}/rest/login'.format(user_domain),
+                            data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD},
+                            verify=False)
     assert response.status_code == 200, response.text
 
 def test_browse_root(user_domain):
     session = requests.session()
-    response = session.post('http://{0}/rest/login'.format(user_domain), data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD})
+    response = session.post('https://{0}/rest/login'.format(user_domain),
+                            data={'name': DEVICE_USER, 'password': DEVICE_PASSWORD},
+                            verify=False)
     assert response.status_code == 200, response.text
     
-    response = session.get('http://{0}/rest/files/'.format(user_domain))
+    response = session.get('https://{0}/rest/files/'.format(user_domain),
+                           verify=False)
     assert response.status_code == 200, response.text
