@@ -2,10 +2,6 @@
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-export TMPDIR=/tmp
-export TMP=/tmp
-export DEBIAN_FRONTEND=noninteractive
-
 if [ "$#" -lt 7 ]; then
     echo "usage $0 redirect_user redirect_password redirect_domain version release [sam|snapd] device_host"
     exit 1
@@ -15,7 +11,7 @@ ARCH=$(uname -m)
 VERSION=$4
 RELEASE=$5
 INSTALLER=$6
-DOMAIN=$3-${ARCH}-${DRONE_BRANCH}-${INSTALLER}
+DOMAIN=$3-${ARCH}-${DRONE_BRANCH}
 DEVICE_HOST=$7
 
 APP=files
@@ -28,11 +24,7 @@ else
     SNAP_ARCH=armhf
 fi
 
-if [ $INSTALLER == "snapd" ]; then
-    ARCHIVE=${APP}_${VERSION}_${SNAP_ARCH}.snap
-else
-    ARCHIVE=${APP}-${VERSION}-${ARCH}.tar.gz
-fi
+ARCHIVE=${APP}_${VERSION}_${SNAP_ARCH}.snap
 APP_ARCHIVE_PATH=$(realpath "$ARCHIVE")
 
 cd ${DIR}
@@ -66,10 +58,6 @@ sshpass -p syncloud ssh -o StrictHostKeyChecking=no root@${DEVICE_HOST} /install
 
 pip2 install -r ${DIR}/../src/dev_requirements.txt
 pip2 install -r ${DIR}/../requirements.txt
-
-coin --to ${DIR} raw --subfolder geckodriver https://github.com/mozilla/geckodriver/releases/download/v${GECKODRIVER}/geckodriver-v${GECKODRIVER}-linux64.tar.gz
-coin --to ${DIR} raw https://ftp.mozilla.org/pub/firefox/releases/${FIREFOX}/linux-x86_64/en-US/firefox-${FIREFOX}.tar.bz2
-curl https://raw.githubusercontent.com/mguillem/JSErrorCollector/master/dist/JSErrorCollector.xpi -o  JSErrorCollector.xpi
 
 #fix dns
 device_ip=$(getent hosts ${DEVICE_HOST} | awk '{ print $1 }')
