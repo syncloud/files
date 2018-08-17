@@ -2,10 +2,6 @@
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-export TMPDIR=/tmp
-export TMP=/tmp
-export DEBIAN_FRONTEND=noninteractive
-
 if [ "$#" -lt 7 ]; then
     echo "usage $0 redirect_user redirect_password redirect_domain version release [sam|snapd] device_host"
     exit 1
