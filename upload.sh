@@ -5,7 +5,6 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 app=files
 branch=$1
 build_number=$2
-installer=$3
 bucket=apps.syncloud.org
 
 mkdir -p /opt/app
@@ -15,7 +14,7 @@ FILE_NAME=${app}_${build_number}_${ARCH}.snap
 
 if [ "${branch}" == "master" ] || [ "${branch}" == "stable" ] ; then
 
-  s3cmd put $FILE_NAME s3://${bucket}/apps/$FILE_NAME
+  s3cmd put ${FILE_NAME} s3://${bucket}/apps/${FILE_NAME}
   
   if [ "${branch}" == "stable" ]; then
     branch=rc
