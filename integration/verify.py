@@ -70,8 +70,8 @@ def module_teardown(user_domain, platform_data_dir, data_dir):
     run_ssh(user_domain, 'mkdir {0}'.format(TMP_DIR), password=LOGS_SSH_PASSWORD)
 
     run_ssh(user_domain, 'journalctl > {0}/journalctl.log'.format(TMP_DIR), password=LOGS_SSH_PASSWORD, throw=False)
-    run_ssh(user_domain, 'journalctl -n snap.files.uwsgi > {0}/journalctl.uwsgi.log'.format(TMP_DIR), password=LOGS_SSH_PASSWORD, throw=False)
-    run_ssh(user_domain, 'journalctl -n snap.files.nginx > {0}/journalctl.nginx.log'.format(TMP_DIR), password=LOGS_SSH_PASSWORD, throw=False)
+    run_ssh(user_domain, 'journalctl -u snap.files.uwsgi > {0}/journalctl.uwsgi.log'.format(TMP_DIR), password=LOGS_SSH_PASSWORD, throw=False)
+    run_ssh(user_domain, 'journalctl -u snap.files.nginx > {0}/journalctl.nginx.log'.format(TMP_DIR), password=LOGS_SSH_PASSWORD, throw=False)
 
     run_scp('root@{0}:{1}/log/* {2}'.format(user_domain, data_dir, app_log_dir), password=LOGS_SSH_PASSWORD, throw=False)
     run_scp('root@{0}:{1}/*.log {2}'.format(user_domain, TMP_DIR, app_log_dir), password=LOGS_SSH_PASSWORD, throw=False)
