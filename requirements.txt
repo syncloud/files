@@ -9,7 +9,7 @@ six==1.9.0
 Flask==0.12.4
 Flask-Login==0.2.11
 itsdangerous==0.24
-Werkzeug==0.10.4
+Werkzeug==0.15.3
 Jinja2==2.7.3
 MarkupSafe==0.23
 psutil==2.1.3
