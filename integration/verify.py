@@ -30,7 +30,7 @@ def module_setup(request, user_domain, platform_data_dir, data_dir, artifact_dir
         device.run_ssh('journalctl -u snap.files.nginx > {0}/journalctl.nginx.log'.format(TMP_DIR), throw=False)
 
         device.scp_from_device('{0}/log/*'.format(data_dir), app_log_dir)
-        device.scp_from_device('{0}/*.log.format(TMP_DIR), app_log_dir)
+        device.scp_from_device('{0}/*.log'.format(TMP_DIR), app_log_dir)
 
     request.addfinalizer(module_teardown)
 
