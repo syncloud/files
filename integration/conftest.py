@@ -1,6 +1,8 @@
 from os.path import dirname, join
-import os
 from syncloudlib.integration.conftest import *
+
+DIR = dirname(__file__)
+
 
 @pytest.fixture(scope="session")
 def project_dir():
