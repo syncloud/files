@@ -1,4 +1,7 @@
-#!/bin/sh
+#!/snap/files/current/python/bin/python
 
-cd ${SNAP}/bin
-./snap-configure
+import os, sys
+sys.path.append(os.path.join(os.environ['SNAP'], 'hooks'))
+
+from installer import Installer
+Installer().install()

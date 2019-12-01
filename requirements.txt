@@ -3,7 +3,7 @@ urllib3==1.10.4
 beautifulsoup4==4.4.0
 massedit==0.67.1
 jsonpickle==0.9.2
-syncloud-lib==47
+syncloud-lib==133
 python_dateutil==2.4.2
 six==1.9.0
 Flask==0.12.4

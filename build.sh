@@ -18,10 +18,15 @@ SNAP_DIR=${DIR}/build/snap
 rm -rf build
 mkdir -p ${BUILD_DIR}
 
-DOWNLOAD_URL=http://artifact.syncloud.org/3rdparty
-coin --to ${BUILD_DIR} raw ${DOWNLOAD_URL}/nginx-${ARCH}.tar.gz
-coin --to ${BUILD_DIR} raw ${DOWNLOAD_URL}/uwsgi-${ARCH}.tar.gz
-coin --to ${BUILD_DIR} raw ${DOWNLOAD_URL}/python-${ARCH}.tar.gz
+wget --progress=dot:giga https://github.com/syncloud/3rdparty/releases/download/1/nginx-${ARCH}.tar.gz
+tar xf nginx-${ARCH}.tar.gz
+mv nginx ${BUILD_DIR}
+wget --progress=dot:giga https://github.com/syncloud/3rdparty/releases/download/1/uwsgi-${ARCH}.tar.gz
+tar xf uwsgi-${ARCH}.tar.gz
+mv uwsgi ${BUILD_DIR}
+wget --progress=dot:giga https://github.com/syncloud/3rdparty/releases/download/1/python-${ARCH}.tar.gz
+tar xf python-${ARCH}.tar.gz
+mv python ${BUILD_DIR}
 
 ${BUILD_DIR}/python/bin/pip install -r ${DIR}/requirements.txt
 
