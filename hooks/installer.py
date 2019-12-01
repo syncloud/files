@@ -1,13 +1,8 @@
 import logging
 import os
-from syncloudlib.application import paths, urls, storage, ports, service
-from syncloudlib import fs, linux, gen, logger
+from os.path import join
 
-import shutil
-from os import makedirs
-from os.path import join, dirname, relpath, isdir, split
-import jinja2
-
+from syncloudlib import fs, gen, logger
 
 USER_NAME="files"
 
