@@ -4,8 +4,8 @@ from os.path import dirname, join
 
 import pytest
 import requests
-from syncloudlib.integration.installer import local_install, get_data_dir, get_app_dir, get_service_prefix, \
-    get_ssh_env_vars, wait_for_sam
+from syncloudlib.integration.hosts import add_host_alias_by_ip
+from syncloudlib.integration.installer import local_install, local_remove, wait_for_installer
 from syncloudlib.integration.ssh import run_scp, run_ssh
 
 DIR = dirname(__file__)
