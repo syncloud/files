@@ -3,7 +3,7 @@ import sys
 import traceback
 from os.path import join
 import logging
-
+from urllib import unquote_plus
 from flask import jsonify, send_from_directory, request, redirect, send_file, Flask
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from flask_login import LoginManager
@@ -96,7 +96,7 @@ def create_web_app(data_dir):
     @app.route(files_prefix + '<path:path>')
     @login_required
     def browse(path=''):
-        filesystem_path = join('/', path)
+        filesystem_path = join('/', unquote_plus(path))
         if os.path.isfile(filesystem_path):
             return send_file(filesystem_path, mimetype='text/plain')
         else:
