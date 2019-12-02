@@ -2,7 +2,7 @@ import logging
 import os
 from os.path import join
 
-from syncloudlib import fs, gen, logger
+from syncloudlib import fs, linux, gen, logger
 
 USER_NAME="files"
 
@@ -18,6 +18,7 @@ class Installer:
         self.config_dir = join(self.app_data, 'config')
 
     def install(self):
+        linux.useradd(USER_NAME)
         variables = {
             'app_dir': self.install_dir,
             'app_data': self.app_data
