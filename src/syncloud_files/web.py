@@ -4,12 +4,12 @@ import traceback
 from os.path import join
 import logging
 
-import convertible
 from flask import jsonify, send_from_directory, request, redirect, send_file, Flask
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from flask_login import LoginManager
 
-from syncloud_app import logger
+from syncloudlib import logger
+from syncloudlib.json import convertible
 
 from syncloud_files.ldapauth import authenticate
 from syncloud_files.flask_decorators import nocache
