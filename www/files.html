@@ -70,7 +70,7 @@
        var item = items[s];
        if (dir == '/')
          dir = '';
-       var full_path = dir + '/' + item.name
+       var full_path = encodeURIComponent(dir + '/' + item.name);
     %>
 
     <% if (s % 2 == 0) {

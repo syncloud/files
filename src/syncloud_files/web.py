@@ -91,7 +91,7 @@ def create_web_app(data_dir):
 
     files_prefix = rest_prefix + '/files/'
 
-
+    @nocache
     @app.route(files_prefix)
     @app.route(files_prefix + '<path:path>')
     @login_required
