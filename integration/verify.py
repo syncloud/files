@@ -75,13 +75,13 @@ def files_session(app_domain, device_user, device_password):
 
 def test_browse_root(app_domain, files_session):
     
-    response = session.get('https://{0}/rest/files/'.format(app_domain),
+    response = files_session.get('https://{0}/rest/files/'.format(app_domain),
                            verify=False)
     assert response.status_code == 200, response.text
 
 
 def test_browse_dir_with_space(app_domain, files_session):
     device.run_ssh('mkdir /"files space test"',)
-    response = session.get('https://{0}/rest/files/files+space+test'.format(app_domain),
+    response = files_session.get('https://{0}/rest/files/files+space+test'.format(app_domain),
                            verify=False)
     assert response.status_code == 200, response.text
