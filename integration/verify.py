@@ -35,7 +35,7 @@ def module_setup(request, platform_data_dir, data_dir, artifact_dir, device):
     request.addfinalizer(module_teardown)
 
 
-def test_start(module_setup):
+def test_start(module_setup, device_host, app, domain, device):
     add_host_alias_by_ip(app, domain, device_host)
     print(check_output('date', shell=True))
     device.run_ssh('date', retries=20)
