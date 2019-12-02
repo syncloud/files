@@ -23,7 +23,7 @@ def module_setup(request, platform_data_dir, data_dir, artifact_dir, device):
         app_log_dir = join(artifact_dir, 'files_log')
         os.mkdir(app_log_dir)
 
-        device.run_ssh('mkdir {0}'.format(TMP_DIR))
+        device.run_ssh('mkdir {0}'.format(TMP_DIR), throw=False)
 
         device.run_ssh('journalctl > {0}/journalctl.log'.format(TMP_DIR), throw=False)
         device.run_ssh('journalctl -u snap.files.uwsgi > {0}/journalctl.uwsgi.log'.format(TMP_DIR), throw=False)
