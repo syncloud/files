@@ -1,7 +1,7 @@
 import os
 from os.path import join, isfile
 
-from syncloud_app import logger
+from syncloudlib import logger
 
 class Browser:
 
