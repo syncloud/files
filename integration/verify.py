@@ -67,7 +67,7 @@ def test_reinstall(app_archive_path, app_domain, device_password):
 def files_session(app_domain, device_user, device_password):
     session = requests.session()
     response = session.post('https://{0}/rest/login'.format(app_domain),
-                            data={'name': device_user,' password': device_password},
+                            data={'name': device_user, 'password': device_password},
                             verify=False)
     assert response.status_code == 200, response.text
     return session
