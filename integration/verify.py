@@ -80,7 +80,7 @@ def test_browse_root(app_domain, files_session):
     assert response.status_code == 200, response.text
 
 
-def test_browse_dir_with_space(app_domain, files_session):
+def test_browse_dir_with_space(app_domain, files_session, device):
     device.run_ssh('mkdir /"files space test"',)
     response = files_session.get('https://{0}/rest/files/files+space+test'.format(app_domain),
                            verify=False)
