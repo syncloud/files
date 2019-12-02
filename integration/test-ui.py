@@ -42,7 +42,7 @@ def test_web(driver, app_domain, device_domain, ui_mode, device_user, device_pas
     time.sleep(2)
     screenshots(driver, screenshot_dir, 'login-' + ui_mode)
 
-    user = driver.find_element_by_id("user")
+    user = driver.find_element_by_id("name")
     user.send_keys(device_user)
     password = driver.find_element_by_id("password")
     password.send_keys(device_password)
