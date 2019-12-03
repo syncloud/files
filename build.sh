@@ -3,15 +3,14 @@
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 cd ${DIR}
 
-NAME=files
-
 if [[ -z "$1" ]]; then
     echo "usage $0 version"
     exit 1
 fi
 
 ARCH=$(uname -m)
-VERSION=$1
+NAME=$1
+VERSION=$2
 
 BUILD_DIR=${DIR}/build/${NAME}
 SNAP_DIR=${DIR}/build/snap
