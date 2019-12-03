@@ -90,14 +90,14 @@ def create_web_app(data_dir):
         return static_file('index.html')
 
     @nocache
-    @app.route(files_prefix + '/list')
+    @app.route(rest_prefix + '/list')
     @login_required
     def list():
         dir = unquote_plus(request.args['dir'])
         return jsonify(items=browser.browse(dir), dir=dir)
 
     @nocache
-    @app.route(files_prefix + '/show')
+    @app.route(rest_prefix + '/show')
     @login_required
     def show():
         filesystem_path = unquote_plus(request.args['file'])
