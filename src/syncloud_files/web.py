@@ -89,20 +89,20 @@ def create_web_app(data_dir):
     def index():
         return static_file('index.html')
 
-    files_prefix = rest_prefix + '/files/'
+    @nocache
+    @app.route(files_prefix + '/list')
+    @login_required
+    def list():
+        dir = unquote_plus(request.args['dir'])
+        return jsonify(items=browser.browse(dir), dir=dir)
 
     @nocache
-    @app.route(files_prefix)
-    @app.route(files_prefix + '<path:path>')
+    @app.route(files_prefix + '/show')
     @login_required
-    def browse(path=''):
-        filesystem_path = join('/', unquote_plus(path))
-        if os.path.isfile(filesystem_path):
-            return send_file(filesystem_path, mimetype='text/plain')
-        else:
-            return jsonify(items=browser.browse(filesystem_path), dir=filesystem_path)
-
-
+    def show():
+        filesystem_path = unquote_plus(request.args['file'])
+        return send_file(filesystem_path, mimetype='text/plain')
+        
     @app.errorhandler(Exception)
     def handle_exception(error):
         print '-'*60
