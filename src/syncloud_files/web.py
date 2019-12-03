@@ -93,14 +93,14 @@ def create_web_app(data_dir):
     @app.route(rest_prefix + '/list')
     @login_required
     def list():
-        dir = request.args['dir']
+        dir = str(request.args['dir'])
         return jsonify(items=browser.browse(dir), dir=dir)
 
     @nocache
     @app.route(rest_prefix + '/show')
     @login_required
     def show():
-        filesystem_path = request.args['file']
+        filesystem_path = str(request.args['file'])
         return send_file(filesystem_path, mimetype='text/plain')
         
     @app.errorhandler(Exception)
