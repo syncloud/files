@@ -70,7 +70,7 @@
        var item = items[s];
        if (dir == '/')
          dir = '';
-       var full_path = dir + '/' + item.name;
+       var full_path = encodeURIComponent(dir + '/' + item.name);
     %>
 
     <% if (s % 2 == 0) {
@@ -114,7 +114,7 @@ $( document ).ready(function() {
     if (params["dir"])
         dir = params["dir"];
 
-    $.get( '/rest/list', {dir: encodeURIComponent(dir) })
+    $.get( '/rest/list', {dir: dir })
         .done( function(data) {
                 var template = $("#item-template").html();
                 $("#items").html(_.template(template)(data));
