@@ -84,15 +84,15 @@ def test_browse_dir_with_space(app_domain, files_session, device):
     device.run_ssh('mkdir /files\ space\ test')
     device.run_ssh('ls -la /')
 
-    response = files_session.get('https://{0}/rest/list?dir=2%Ffiles+space+test'.format(app_domain),
+    response = files_session.get('https://{0}/rest/list?dir=/files+space+test'.format(app_domain),
                            verify=False)
     assert response.status_code == 200, response.text
-
+{
 
 def test_browse_dir_with_plus(app_domain, files_session, device):
     device.run_ssh('mkdir /files+test')
     device.run_ssh('ls -la /')
 
-    response = files_session.get('https://{0}/rest/list?dir=2%Ffiles2%Btest'.format(app_domain),
+    response = files_session.get('https://{0}/rest/list?dir=/files2%Btest'.format(app_domain),
                            verify=False)
     assert response.status_code == 200, response.text
