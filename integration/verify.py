@@ -87,7 +87,7 @@ def test_browse_dir_with_space(app_domain, files_session, device):
     response = files_session.get('https://{0}/rest/list?dir=/files+space+test'.format(app_domain),
                            verify=False)
     assert response.status_code == 200, response.text
-{
+
 
 def test_browse_dir_with_plus(app_domain, files_session, device):
     device.run_ssh('mkdir /files+test')
