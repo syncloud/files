@@ -5,7 +5,7 @@ from os.path import join
 import logging
 from urllib import unquote_plus
 from flask import jsonify, send_from_directory, request, redirect, send_file, Flask
-from flask.ext.login import login_user, logout_user, current_user, login_required
+from flask_login import login_user, logout_user, current_user, login_required
 from flask_login import LoginManager
 
 from syncloudlib import logger
