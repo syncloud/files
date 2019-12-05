@@ -19,6 +19,12 @@ class Installer:
 
     def install(self):
         linux.useradd(USER_NAME)
+        self.regenerate_configs()
+
+    def post_refresh(self):
+        self.regenerate_configs()
+
+    def regenerate_configs(self):
         variables = {
             'app_dir': self.install_dir,
             'app_data': self.app_data
