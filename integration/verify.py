@@ -32,7 +32,7 @@ def module_setup(request, platform_data_dir, data_dir, artifact_dir, device):
 
         device.scp_from_device('{0}/log/*'.format(data_dir), app_log_dir)
         device.scp_from_device('{0}/*.log'.format(TMP_DIR), app_log_dir)
-        check_output('chmod -R a+r {0}', app_log_dir)
+        check_output('chmod -R a+r {0}'.format(app_log_dir))
     request.addfinalizer(module_teardown)
 
 
