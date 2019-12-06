@@ -3,13 +3,13 @@ import sys
 import traceback
 from os.path import join
 import logging
-
-import convertible
+from urllib import unquote_plus
 from flask import jsonify, send_from_directory, request, redirect, send_file, Flask
-from flask.ext.login import login_user, logout_user, current_user, login_required
+from flask_login import login_user, logout_user, current_user, login_required
 from flask_login import LoginManager
 
-from syncloud_app import logger
+from syncloudlib import logger
+from syncloudlib.json import convertible
 
 from syncloud_files.ldapauth import authenticate
 from syncloud_files.flask_decorators import nocache
@@ -89,20 +89,20 @@ def create_web_app(data_dir):
     def index():
         return static_file('index.html')
 
-    files_prefix = rest_prefix + '/files/'
-
-
-    @app.route(files_prefix)
-    @app.route(files_prefix + '<path:path>')
+    @nocache
+    @app.route(rest_prefix + '/list')
     @login_required
-    def browse(path=''):
-        filesystem_path = join('/', path)
-        if os.path.isfile(filesystem_path):
-            return send_file(filesystem_path, mimetype='text/plain')
-        else:
-            return jsonify(items=browser.browse(filesystem_path), dir=filesystem_path)
+    def list():
+        dir = str(request.args['dir'])
+        return jsonify(items=browser.browse(dir), dir=dir)
 
-
+    @nocache
+    @app.route(rest_prefix + '/show')
+    @login_required
+    def show():
+        filesystem_path = str(request.args['file'])
+        return send_file(filesystem_path, mimetype='text/plain')
+        
     @app.errorhandler(Exception)
     def handle_exception(error):
         print '-'*60

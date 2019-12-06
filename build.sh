@@ -3,25 +3,29 @@
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 cd ${DIR}
 
-NAME=files
-
 if [[ -z "$1" ]]; then
     echo "usage $0 version"
     exit 1
 fi
 
 ARCH=$(uname -m)
-VERSION=$1
+NAME=$1
+VERSION=$2
 
 BUILD_DIR=${DIR}/build/${NAME}
 SNAP_DIR=${DIR}/build/snap
 rm -rf build
 mkdir -p ${BUILD_DIR}
 
-DOWNLOAD_URL=http://artifact.syncloud.org/3rdparty
-coin --to ${BUILD_DIR} raw ${DOWNLOAD_URL}/nginx-${ARCH}.tar.gz
-coin --to ${BUILD_DIR} raw ${DOWNLOAD_URL}/uwsgi-${ARCH}.tar.gz
-coin --to ${BUILD_DIR} raw ${DOWNLOAD_URL}/python-${ARCH}.tar.gz
+wget --progress=dot:giga https://github.com/syncloud/3rdparty/releases/download/1/nginx-${ARCH}.tar.gz
+tar xf nginx-${ARCH}.tar.gz
+mv nginx ${BUILD_DIR}
+wget --progress=dot:giga https://github.com/syncloud/3rdparty/releases/download/1/uwsgi-${ARCH}.tar.gz
+tar xf uwsgi-${ARCH}.tar.gz
+mv uwsgi ${BUILD_DIR}
+wget --progress=dot:giga https://github.com/syncloud/3rdparty/releases/download/1/python-${ARCH}.tar.gz
+tar xf python-${ARCH}.tar.gz
+mv python ${BUILD_DIR}
 
 ${BUILD_DIR}/python/bin/pip install -r ${DIR}/requirements.txt
 
@@ -50,4 +54,6 @@ echo "version: $VERSION" >> ${SNAP_DIR}/meta/snap.yaml
 echo "architectures:" >> ${SNAP_DIR}/meta/snap.yaml
 echo "- ${ARCH}" >> ${SNAP_DIR}/meta/snap.yaml
 
-mksquashfs ${SNAP_DIR} ${DIR}/${NAME}_${VERSION}_${ARCH}.snap -noappend -comp xz -no-xattrs -all-root
+PACKAGE=${NAME}_${VERSION}_${ARCH}.snap
+echo ${PACKAGE} > ${DIR}/package.name
+mksquashfs ${SNAP_DIR} ${DIR}/${PACKAGE} -noappend -comp xz -no-xattrs -all-root

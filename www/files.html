@@ -70,7 +70,7 @@
        var item = items[s];
        if (dir == '/')
          dir = '';
-       var full_path = dir + '/' + item.name
+       var full_path = encodeURIComponent(dir + '/' + item.name);
     %>
 
     <% if (s % 2 == 0) {
@@ -86,7 +86,7 @@
                   <% if (!item.is_file) { %>
                     <a href="/files.html?dir=<%= full_path %>" class="clickable" ><%= item.name %></a>
                   <% } else { %>
-                    <a href="/rest/files<%= full_path %>" class="clickable"><%= item.name %></a>
+                    <a href="/rest/show?file=<%= full_path %>" class="clickable"><%= item.name %></a>
                   <% } %>
               </div>
         </div>
@@ -114,7 +114,7 @@ $( document ).ready(function() {
     if (params["dir"])
         dir = params["dir"];
 
-    $.get( '/rest/files' + dir)
+    $.get( '/rest/list', {dir: dir })
         .done( function(data) {
                 var template = $("#item-template").html();
                 $("#items").html(_.template(template)(data));
