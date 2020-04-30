@@ -21,7 +21,7 @@ def module_setup(request, platform_data_dir, data_dir, artifact_dir, device):
         os.mkdir(platform_log_dir)
         device.scp_from_device('{0}/log/*'.format(platform_data_dir), platform_log_dir)
 
-        app_log_dir = join(artifact_dir, 'files_log')
+        app_log_dir = join(artifact_dir, 'log')
         os.mkdir(app_log_dir)
 
         device.run_ssh('mkdir {0}'.format(TMP_DIR), throw=False)
