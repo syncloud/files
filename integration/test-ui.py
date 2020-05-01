@@ -25,9 +25,9 @@ def module_setup(request, device, artifact_dir, ui_mode):
         device.run_ssh('mkdir -p {0}'.format(TMP_DIR), throw=False)
         device.run_ssh('journalctl > {0}/journalctl.ui.{1}.log'.format(TMP_DIR, ui_mode), throw=False)
         device.run_ssh('cp /var/log/syslog {0}/syslog.ui.{1}.log'.format(TMP_DIR, ui_mode), throw=False)
-      
-        device.scp_from_device('{0}/*'.format(TMP_DIR), join(artifact_dir, 'log'))
-
+        app_log_dir = join(artifact_dir, 'log')
+        device.scp_from_device('{0}/*'.format(TMP_DIR), app_log_dir)
+        device.scp_from_device('{0}/log/*'.format(data_dir), app_log_dir)
     request.addfinalizer(module_teardown)
 
 
