@@ -21,7 +21,7 @@ def module_setup(request, platform_data_dir, data_dir, artifact_dir, device):
         os.mkdir(platform_log_dir)
         device.scp_from_device('{0}/log/*'.format(platform_data_dir), platform_log_dir)
 
-        app_log_dir = join(artifact_dir, 'files_log')
+        app_log_dir = join(artifact_dir, 'log')
         os.mkdir(app_log_dir)
 
         device.run_ssh('mkdir {0}'.format(TMP_DIR), throw=False)
@@ -52,8 +52,13 @@ def test_install(app_archive_path, device_host, device_password, device_session)
     wait_for_installer(device_session, device_host)
 
 
+def test_index(app_domain, files_session):
+    response = files_session.get('https://{0}'.format(app_domain), verify=False)
+    assert response.status_code == 200, response.text
+
+
 def test_remove(device_session, device_host):
-    response = device_session.get('https://{0}/rest/remove?app_id=mail'.format(device_host),
+    response = device_session.get('https://{0}/rest/remove?app_id=files'.format(device_host),
                                   allow_redirects=False, verify=False)
     assert response.status_code == 200, response.text
     wait_for_installer(device_session, device_host)
@@ -74,7 +79,6 @@ def files_session(app_domain, device_user, device_password):
 
 
 def test_browse_root(app_domain, files_session):
-    
     response = files_session.get('https://{0}/rest/list?dir=/'.format(app_domain),
                            verify=False)
     assert response.status_code == 200, response.text
