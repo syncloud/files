@@ -1,13 +1,11 @@
 import os
-import shutil
 from os.path import dirname, join
 from subprocess import check_output
 
 import pytest
 import requests
 from syncloudlib.integration.hosts import add_host_alias_by_ip
-from syncloudlib.integration.installer import local_install, local_remove, wait_for_installer
-from syncloudlib.integration.ssh import run_scp, run_ssh
+from syncloudlib.integration.installer import local_install, wait_for_installer
 
 DIR = dirname(__file__)
 TMP_DIR = '/tmp/syncloud'
@@ -16,7 +14,6 @@ TMP_DIR = '/tmp/syncloud'
 @pytest.fixture(scope="session")
 def module_setup(request, platform_data_dir, data_dir, artifact_dir, device):
     def module_teardown():
-
         platform_log_dir = join(artifact_dir, 'platform_log')
         os.mkdir(platform_log_dir)
         device.scp_from_device('{0}/log/*'.format(platform_data_dir), platform_log_dir)
@@ -33,6 +30,7 @@ def module_setup(request, platform_data_dir, data_dir, artifact_dir, device):
         device.scp_from_device('{0}/log/*'.format(data_dir), app_log_dir)
         device.scp_from_device('{0}/*.log'.format(TMP_DIR), app_log_dir)
         check_output('chmod -R a+r {0}'.format(app_log_dir), shell=True)
+
     request.addfinalizer(module_teardown)
 
 
@@ -80,7 +78,7 @@ def files_session(app_domain, device_user, device_password):
 
 def test_browse_root(app_domain, files_session):
     response = files_session.get('https://{0}/rest/list?dir=/'.format(app_domain),
-                           verify=False)
+                                 verify=False)
     assert response.status_code == 200, response.text
 
 
@@ -89,8 +87,8 @@ def test_browse_dir_with_space(app_domain, files_session, device):
     device.run_ssh('ls -la /')
 
     response = files_session.get('https://{0}/rest/list'.format(app_domain),
-                           params={'dir': '/files space test'},
-                           verify=False)
+                                 params={'dir': '/files space test'},
+                                 verify=False)
     assert response.status_code == 200, response.text
 
 
@@ -99,6 +97,6 @@ def test_browse_dir_with_plus(app_domain, files_session, device):
     device.run_ssh('ls -la /')
 
     response = files_session.get('https://{0}/rest/list'.format(app_domain),
-                           params={'dir': '/files+test'},
-                           verify=False)
+                                 params={'dir': '/files+test'},
+                                 verify=False)
     assert response.status_code == 200, response.text
