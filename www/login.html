@@ -124,21 +124,21 @@
     $(document).ready(function () {
         $("#form-login").submit(function (event) {
             event.preventDefault();
-
-            var values = $("#form-login").serializeArray();
             reset_error();
-            var posting = $.post("/rest/login", values)
-                    .done(function (data) {
-                        window.location.replace("/");
-                    })
-                    .fail(function (xhr, textStatus, errorThrown) {
-                        if (xhr.hasOwnProperty('responseJSON')) {
-                            var error = xhr.responseJSON;
-                            show_error(error);
-                        } else {
-                            window.location.href = "/login.html";
-                        }
-                    });
+            $.post("/rest/login",
+                JSON.stringify({ name: $("#name").val(), password:  $("#password").val() }),
+                function (data) {
+                    window.location.replace("/");
+                },
+                "json"
+            ).fail(function (xhr, textStatus, errorThrown) {
+                if (xhr.hasOwnProperty('responseJSON')) {
+                    var error = xhr.responseJSON;
+                    show_error(error);
+                } else {
+                    window.location.href = "/login.html";
+                }
+            });
         });
     });
 </script>
@@ -146,13 +146,11 @@
 <script type="text/javascript">
 
 $( document ).ready(function() {
-
     
-        $("#menu_login").addClass("active");
-    
+    $("#menu_login").addClass("active");
 
     $("#menu_logout").click(function(event) {
-        var posting = $.post( '/rest/logout' )
+        $.post( '/rest/logout' )
             .done( function(data) {
                 window.location.href = "/login.html";
             })
