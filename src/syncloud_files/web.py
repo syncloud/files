@@ -56,7 +56,7 @@ def create_web_app(data_dir):
 
     @app.route(rest_prefix + "/login", methods=["GET", "POST"])
     def login():
-        request_json = request.json
+        request_json = request.get_json()
         if 'name' in request_json and 'password' in request_json:
             try:
                 authenticate(request_json['name'], request_json['password'])
