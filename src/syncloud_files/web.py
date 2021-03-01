@@ -59,7 +59,7 @@ def create_web_app(data_dir):
                 user_flask = FlaskUser(User(request_json['name']))
                 login_user(user_flask, remember=False)
                 # next_url = request.get('next_url', '/')
-                return redirect("/")
+                return jsonify(message='OK'), 200
             except Exception, e:
                 traceback.print_exc(file=sys.stdout)
                 return jsonify(message=e.message), 400
@@ -80,7 +80,7 @@ def create_web_app(data_dir):
     @app.route('/')
     @login_required
     def index():
-        return static_file('index.html')
+        return static_file('files.html')
 
     @nocache
     @app.route(rest_prefix + '/list')

@@ -133,15 +133,15 @@
                 success: function (data) {
                     window.location.replace("/");
                 },
+                error: function (xhr, textStatus, errorThrown) {
+                    if (xhr.hasOwnProperty('responseJSON')) {
+                        var error = xhr.responseJSON;
+                        show_error(error);
+                    } else {
+                        window.location.href = "/login.html";
+                    }
+                },
                 dataType: "json"
-            })
-                .fail(function (xhr, textStatus, errorThrown) {
-                if (xhr.hasOwnProperty('responseJSON')) {
-                    var error = xhr.responseJSON;
-                    show_error(error);
-                } else {
-                    window.location.href = "/login.html";
-                }
             });
         });
     });
