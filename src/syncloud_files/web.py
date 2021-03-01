@@ -11,11 +11,11 @@ from flask_login import LoginManager
 from syncloudlib import logger
 from syncloudlib.json import convertible
 
-from syncloud_files.ldapauth import authenticate
-from syncloud_files.flask_decorators import nocache
-from syncloud_files.models import User, FlaskUser
-from syncloud_files.config import BrowserConfig
-from syncloud_files.browser import Browser
+from ldapauth import authenticate
+from flask_decorators import nocache
+from models import User, FlaskUser
+from config import BrowserConfig
+from browser import Browser
 
 
 def create_web_app(data_dir):
@@ -34,7 +34,6 @@ def create_web_app(data_dir):
     html_prefix = ''
     rest_prefix = '/rest'
 
-
     @login_manager.unauthorized_handler
     def _callback():
         if request.is_xhr:
@@ -42,17 +41,14 @@ def create_web_app(data_dir):
         else:
             return redirect(html_prefix + '/login.html')
 
-
     @app.route(html_prefix + '/<path:filename>')
     @nocache
     def static_file(filename):
         return send_from_directory(config.www_root(), filename)
 
-
     @login_manager.user_loader
     def load_user(email):
         return FlaskUser(User(email))
-
 
     @app.route(rest_prefix + "/login", methods=["GET", "POST"])
     def login():
@@ -70,19 +66,16 @@ def create_web_app(data_dir):
 
         return jsonify(message='missing name or password'), 400
 
-
     @app.route(rest_prefix + "/logout", methods=["POST"])
     @login_required
     def logout():
         logout_user()
         return 'User logged out', 200
 
-
     @app.route(rest_prefix + "/user", methods=["GET"])
     @login_required
     def user():
         return jsonify(convertible.to_dict(current_user.user)), 200
-
 
     @app.route('/')
     @login_required
