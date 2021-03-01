@@ -125,19 +125,23 @@
         $("#form-login").submit(function (event) {
             event.preventDefault();
             reset_error();
-            $.post("/rest/login",
-                JSON.stringify({ name: $("#name").val(), password:  $("#password").val() }),
-                function (data) {
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: "/rest/login",
+                data: JSON.stringify({ name: $("#name").val(), password: $("#password").val() }),
+                success: function (data) {
                     window.location.replace("/");
                 },
-                "json"
-            ).fail(function (xhr, textStatus, errorThrown) {
-                if (xhr.hasOwnProperty('responseJSON')) {
-                    var error = xhr.responseJSON;
-                    show_error(error);
-                } else {
-                    window.location.href = "/login.html";
-                }
+                error: function (xhr, textStatus, errorThrown) {
+                    if (xhr.hasOwnProperty('responseJSON')) {
+                        var error = xhr.responseJSON;
+                        show_error(error);
+                    } else {
+                        window.location.href = "/login.html";
+                    }
+                },
+                dataType: "json"
             });
         });
     });
