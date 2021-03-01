@@ -34,6 +34,6 @@ def test_web(selenium, device_user, device_password):
     selenium.screenshot('login-filled')
     password.send_keys(Keys.RETURN)
     selenium.screenshot('login_progress')
-    selenium.find_by_xpath("//button[@id='menu_logout']")
+    selenium.find_by_xpath("//div[@id='items']")
     selenium.screenshot('main')
 
