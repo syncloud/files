@@ -1,10 +1,7 @@
-import time
-from os.path import dirname, join
-
 import pytest
+from os.path import dirname, join
 from selenium.webdriver.common.keys import Keys
 from syncloudlib.integration.hosts import add_host_alias_by_ip
-from syncloudlib.integration.screenshots import screenshots
 
 DIR = dirname(__file__)
 TMP_DIR = '/tmp/syncloud/ui'
@@ -27,25 +24,16 @@ def test_start(module_setup, app, device_host, domain):
     add_host_alias_by_ip(app, domain, device_host)
 
 
-def test_web(driver, app_domain, ui_mode, device_user, device_password, screenshot_dir):
+def test_web(selenium, device_user, device_password):
 
-    driver.get("https://{0}".format(app_domain))
-    
-    time.sleep(2)
-    screenshots(driver, screenshot_dir, 'login-' + ui_mode)
-
-    user = driver.find_element_by_id("name")
-    user.send_keys(device_user)
-    password = driver.find_element_by_id("password")
+    selenium.open_app()
+    selenium.screenshot('login')
+    selenium.find_by_id("name").send_keys(device_user)
+    password = selenium.find_by_id("password")
     password.send_keys(device_password)
-   
-    screenshots(driver, screenshot_dir, 'login-filled-' + ui_mode)
-  
+    selenium.screenshot('login-filled')
     password.send_keys(Keys.RETURN)
+    selenium.screenshot('login_progress')
+    selenium.find_by_xpath("//button[@id='menu_logout']")
+    selenium.screenshot('main')
 
-    time.sleep(10)
-    screenshots(driver, screenshot_dir, 'login_progress-' + ui_mode)
-    time.sleep(10)
-    
-    screenshots(driver, screenshot_dir, 'main-' + ui_mode)
-    
