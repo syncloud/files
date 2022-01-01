@@ -98,9 +98,7 @@ def create_web_app(data_dir):
         
     @app.errorhandler(Exception)
     def handle_exception(error):
-        print '-'*60
         traceback.print_exc(file=sys.stdout)
-        print '-'*60
         response = jsonify(success=False, message=error.message)
         status_code = 500
         return response, status_code
