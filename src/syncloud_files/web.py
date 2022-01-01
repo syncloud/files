@@ -60,7 +60,7 @@ def create_web_app(data_dir):
                 login_user(user_flask, remember=False)
                 # next_url = request.get('next_url', '/')
                 return jsonify(message='OK'), 200
-            except Exception, e:
+            except Exception as e:
                 traceback.print_exc(file=sys.stdout)
                 return jsonify(message=e.message), 400
 
