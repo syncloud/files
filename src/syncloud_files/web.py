@@ -10,11 +10,11 @@ from flask_login import LoginManager
 from syncloudlib import logger
 from syncloudlib.json import convertible
 
-from ldapauth import authenticate
+from syncloud_files.ldapauth import authenticate
 from flask_decorators import nocache
-from models import User, FlaskUser
-from config import BrowserConfig
-from browser import Browser
+from syncloud_files.models import User, FlaskUser
+from syncloud_files.config import BrowserConfig
+from syncloud_files.browser import Browser
 
 
 def create_web_app(data_dir):
