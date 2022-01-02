@@ -11,7 +11,7 @@ from syncloudlib import logger
 from syncloudlib.json import convertible
 
 from syncloud_files.ldapauth import authenticate
-from flask_decorators import nocache
+from syncloud_files.flask_decorators import nocache
 from syncloud_files.models import User, FlaskUser
 from syncloud_files.config import BrowserConfig
 from syncloud_files.browser import Browser
