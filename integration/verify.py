@@ -5,7 +5,7 @@ from subprocess import check_output
 import pytest
 import requests
 from syncloudlib.integration.hosts import add_host_alias
-from syncloudlib.integration.installer import local_install, wait_for_installer
+from syncloudlib.integration.installer import local_install
 
 DIR = dirname(__file__)
 TMP_DIR = '/tmp/syncloud'
@@ -46,8 +46,7 @@ def test_activate_device(device):
 
 def test_install(app_archive_path, device_host, device_password, device_session):
     local_install(device_host, device_password, app_archive_path)
-    wait_for_installer(device_session, device_host)
-
+    
 
 def test_index(app_domain, files_session):
     response = files_session.get('https://{0}'.format(app_domain), verify=False)

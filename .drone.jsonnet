@@ -54,7 +54,7 @@ local build(arch, test_ui) = {
             image: "debian:buster-slim",
             commands: [
                 "VERSION=$(cat version)",
-                "./package.sh " + name + " $VERSION " + arch
+                "./package.sh " + name + " $VERSION"
             ]
         }
         ] + ( if arch == "amd64" then [
@@ -62,7 +62,7 @@ local build(arch, test_ui) = {
             name: "test-integration-jessie",
             image: "python:3.8-slim-buster",
             commands: [
-              "apt-get update && apt-get install -y sshpass openssh-client netcat rustc file libxml2-dev libxslt-dev build-essential libz-dev curl",
+              "apt-get update && apt-get install -y sshpass openssh-client",
               "APP_ARCHIVE_PATH=$(realpath $(cat package.name))",
               "cd integration",
               "pip install -r requirements.txt",
@@ -73,7 +73,7 @@ local build(arch, test_ui) = {
             name: "test-integration-buster",
             image: "python:3.8-slim-buster",
             commands: [
-              "apt-get update && apt-get install -y sshpass openssh-client netcat rustc file libxml2-dev libxslt-dev build-essential libz-dev curl",
+              "apt-get update && apt-get install -y sshpass openssh-client",
               "APP_ARCHIVE_PATH=$(realpath $(cat package.name))",
               "cd integration",
               "pip install -r requirements.txt",
@@ -84,7 +84,7 @@ local build(arch, test_ui) = {
             name: "test-ui-desktop-jessie",
             image: "python:3.8-slim-buster",
             commands: [
-              "apt-get update && apt-get install -y sshpass openssh-client libxml2-dev libxslt-dev build-essential libz-dev curl",
+              "apt-get update && apt-get install -y sshpass openssh-client",
               "cd integration",
               "pip install -r requirements.txt",
               "py.test -x -s test-ui.py --distro=jessie --ui-mode=desktop --domain=jessie.com --device-host=" + name + ".jessie.com --app=" + name + " --browser=" + browser,
@@ -98,7 +98,7 @@ local build(arch, test_ui) = {
             name: "test-ui-mobile-jessie",
             image: "python:3.8-slim-buster",
             commands: [
-              "apt-get update && apt-get install -y sshpass openssh-client libxml2-dev libxslt-dev build-essential libz-dev curl",
+              "apt-get update && apt-get install -y sshpass openssh-client",
               "cd integration",
               "pip install -r requirements.txt",
               "py.test -x -s test-ui.py --distro=jessie --ui-mode=mobile --domain=jessie.com --device-host=" + name + ".jessie.com --app=" + name + " --browser=" + browser,
@@ -112,7 +112,7 @@ local build(arch, test_ui) = {
             name: "test-ui-desktop-buster",
             image: "python:3.8-slim-buster",
             commands: [
-              "apt-get update && apt-get install -y sshpass openssh-client libxml2-dev libxslt-dev build-essential libz-dev curl",
+              "apt-get update && apt-get install -y sshpass openssh-client",
               "cd integration",
               "pip install -r requirements.txt",
               "py.test -x -s test-ui.py --distro=buster --ui-mode=desktop --domain=buster.com --device-host=" + name + ".buster.com --app=" + name + " --browser=" + browser,
@@ -126,7 +126,7 @@ local build(arch, test_ui) = {
             name: "test-ui-mobile-buster",
             image: "python:3.8-slim-buster",
             commands: [
-              "apt-get update && apt-get install -y sshpass openssh-client libxml2-dev libxslt-dev build-essential libz-dev curl",
+              "apt-get update && apt-get install -y sshpass openssh-client",
               "cd integration",
               "pip install -r requirements.txt",
               "py.test -x -s test-ui.py --distro=buster --ui-mode=mobile --domain=buster.com --device-host=" + name + ".buster.com --app=" + name + " --browser=" + browser,

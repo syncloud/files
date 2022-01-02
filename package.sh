@@ -3,19 +3,20 @@
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 cd ${DIR}
 
-if [[ -z "$3" ]]; then
-    echo "usage $0 app version arch"
+if [[ -z "$2" ]]; then
+    echo "usage $0 app version"
     exit 1
 fi
 
 NAME=$1
 VERSION=$2
-ARCH=$3
 
 SNAP_DIR=${DIR}/build/snap
 
 apt update
-apt -y install squashfs-tools
+apt -y install squashfs-tools dpkg-dev
+
+ARCH=$(dpkg-architecture -q DEB_HOST_ARCH)
 
 rm -rf ${DIR}/*.snap
 mkdir ${SNAP_DIR}
