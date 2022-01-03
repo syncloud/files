@@ -194,7 +194,7 @@ local build(arch, test_ui) = {
             }
         }
     ],
-    services: ( if arch == "amd64" then [
+    services: ( if arch != "arm64" then [
         {
             name: name + ".jessie.com",
             image: "syncloud/platform-jessie-" + arch,
