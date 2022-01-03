@@ -1,4 +1,4 @@
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 from os.path import join
 
 BROWSER_CONFIG_NAME = 'files.cfg'

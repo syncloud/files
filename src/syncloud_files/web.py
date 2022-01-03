@@ -3,19 +3,17 @@ import sys
 import traceback
 from os.path import join
 import logging
-from urllib import unquote_plus
 from flask import jsonify, send_from_directory, request, redirect, send_file, Flask
 from flask_login import login_user, logout_user, current_user, login_required
 from flask_login import LoginManager
 
 from syncloudlib import logger
-from syncloudlib.json import convertible
 
-from ldapauth import authenticate
-from flask_decorators import nocache
-from models import User, FlaskUser
-from config import BrowserConfig
-from browser import Browser
+from syncloud_files.ldapauth import authenticate
+from syncloud_files.flask_decorators import nocache
+from syncloud_files.models import User, FlaskUser
+from syncloud_files.config import BrowserConfig
+from syncloud_files.browser import Browser
 
 
 def create_web_app(data_dir):
@@ -60,7 +58,7 @@ def create_web_app(data_dir):
                 login_user(user_flask, remember=False)
                 # next_url = request.get('next_url', '/')
                 return jsonify(message='OK'), 200
-            except Exception, e:
+            except Exception as e:
                 traceback.print_exc(file=sys.stdout)
                 return jsonify(message=e.message), 400
 
@@ -75,7 +73,7 @@ def create_web_app(data_dir):
     @app.route(rest_prefix + "/user", methods=["GET"])
     @login_required
     def user():
-        return jsonify(convertible.to_dict(current_user.user)), 200
+        return jsonify(name=current_user.user.name), 200
 
     @app.route('/')
     @login_required
@@ -98,11 +96,10 @@ def create_web_app(data_dir):
         
     @app.errorhandler(Exception)
     def handle_exception(error):
-        print '-'*60
         traceback.print_exc(file=sys.stdout)
-        print '-'*60
         response = jsonify(success=False, message=error.message)
         status_code = 500
         return response, status_code
 
     return app
+

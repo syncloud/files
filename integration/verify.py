@@ -4,8 +4,8 @@ from subprocess import check_output
 
 import pytest
 import requests
-from syncloudlib.integration.hosts import add_host_alias_by_ip
-from syncloudlib.integration.installer import local_install, wait_for_installer
+from syncloudlib.integration.hosts import add_host_alias
+from syncloudlib.integration.installer import local_install
 
 DIR = dirname(__file__)
 TMP_DIR = '/tmp/syncloud'
@@ -34,21 +34,19 @@ def module_setup(request, platform_data_dir, data_dir, artifact_dir, device):
     request.addfinalizer(module_teardown)
 
 
-def test_start(module_setup, device_host, app, domain, device):
-    add_host_alias_by_ip(app, domain, device_host)
-    print(check_output('date', shell=True))
-    device.run_ssh('date', retries=20)
+def test_start(module_setup, device, app, domain, device_host):
+    add_host_alias(app, device_host, domain)
+    device.run_ssh('date', retries=100, throw=True)
 
 
 def test_activate_device(device):
-    response = device.activate()
+    response = device.activate_custom()
     assert response.status_code == 200, response.text
 
 
 def test_install(app_archive_path, device_host, device_password, device_session):
     local_install(device_host, device_password, app_archive_path)
-    wait_for_installer(device_session, device_host)
-
+    
 
 def test_index(app_domain, files_session):
     response = files_session.get('https://{0}'.format(app_domain), verify=False)
