@@ -150,7 +150,7 @@ local build(arch, test_ui) = {
             commands: [
               "PACKAGE=$(cat package.name)",
               "pip install syncloud-lib s3cmd",
-              "syncloud-upload.sh $DRONE_BRANCH $PACKAGE"
+              "syncloud-upload-v2.sh $DRONE_BRANCH $PACKAGE"
             ]
         }] + [
         {
