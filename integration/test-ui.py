@@ -1,7 +1,7 @@
 import pytest
 from os.path import dirname, join
 from selenium.webdriver.common.keys import Keys
-from syncloudlib.integration.hosts import add_host_alias_by_ip
+from syncloudlib.integration.hosts import add_host_alias
 
 DIR = dirname(__file__)
 TMP_DIR = '/tmp/syncloud/ui'
@@ -20,8 +20,8 @@ def module_setup(request, device, artifact_dir, data_dir, ui_mode):
     request.addfinalizer(module_teardown)
 
 
-def test_start(module_setup, app, device_host, domain):
-    add_host_alias_by_ip(app, domain, device_host)
+def test_start(module_setup, device, app, domain, device_host):
+    add_host_alias(app, device_host, domain)
 
 
 def test_web(selenium, device_user, device_password):
