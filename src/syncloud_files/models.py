@@ -16,4 +16,4 @@ class FlaskUser:
         return False
 
     def get_id(self):
-        return self.user
+        return self.user.name
