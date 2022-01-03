@@ -57,7 +57,7 @@ local build(arch, test_ui) = {
                 "./package.sh " + name + " $VERSION"
             ]
         }
-        ] + ( if arch == "amd64" then [
+        ] + ( if arch != "arm64" then [
         {
             name: "test-integration-jessie",
             image: "python:3.8-slim-buster",
