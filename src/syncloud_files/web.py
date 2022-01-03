@@ -73,7 +73,7 @@ def create_web_app(data_dir):
     @app.route(rest_prefix + "/user", methods=["GET"])
     @login_required
     def user():
-        return jsonify(name=current_user.user.name)), 200
+        return jsonify(name=current_user.user.name), 200
 
     @app.route('/')
     @login_required
@@ -102,3 +102,4 @@ def create_web_app(data_dir):
         return response, status_code
 
     return app
+
