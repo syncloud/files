@@ -8,7 +8,6 @@ from flask_login import login_user, logout_user, current_user, login_required
 from flask_login import LoginManager
 
 from syncloudlib import logger
-from syncloudlib.json import convertible
 
 from syncloud_files.ldapauth import authenticate
 from syncloud_files.flask_decorators import nocache
@@ -74,7 +73,7 @@ def create_web_app(data_dir):
     @app.route(rest_prefix + "/user", methods=["GET"])
     @login_required
     def user():
-        return jsonify(convertible.to_dict(current_user.user)), 200
+        return jsonify(name=current_user.user.name)), 200
 
     @app.route('/')
     @login_required
