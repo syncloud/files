@@ -37,3 +37,6 @@ def test_web(selenium, device_user, device_password):
     selenium.find_by_xpath("//div[@id='items']")
     selenium.screenshot('main')
 
+
+def test_teardown(selenium):
+    selenium.driver.quit()
