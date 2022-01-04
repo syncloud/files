@@ -194,6 +194,12 @@ local build(arch, test_ui) = {
             }
         }
     ],
+    trigger: {
+      event: [
+        "push",
+        "pull_request"
+      ]
+    },
     services: ( if arch != "arm64" then [
         {
             name: name + ".jessie.com",
