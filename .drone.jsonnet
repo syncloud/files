@@ -255,7 +255,7 @@ local build(arch, test_ui) = [ {
 {
     kind: "pipeline",
     type: "docker",
-    name: arch,
+    name: "promote-" + arch,
     platform: {
         os: "linux",
         arch: arch
