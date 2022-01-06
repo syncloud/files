@@ -274,7 +274,8 @@ local build(arch, test_ui) = [ {
             },
             commands: [
               "pip install syncloud-lib s3cmd",
-              "syncloud-promote.sh " + name + " " + arch
+              "apt update && apt -y install dpkg-dev",
+              "syncloud-promote.sh " + name + " $(dpkg-architecture -q DEB_HOST_ARCH)"
             ]
       }
      ],
