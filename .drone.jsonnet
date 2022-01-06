@@ -14,7 +14,7 @@ local build(arch, test_ui) = {
             name: "version",
             image: "debian:buster-slim",
             commands: [
-                "echo $(date +%y%m%d)$DRONE_BUILD_NUMBER > version"
+                "echo $DRONE_BUILD_NUMBER > version"
             ]
         },
          {
@@ -194,6 +194,12 @@ local build(arch, test_ui) = {
             }
         }
     ],
+    trigger: {
+      event: [
+        "push",
+        "pull_request"
+      ]
+    },
     services: ( if arch != "arm64" then [
         {
             name: name + ".jessie.com",
