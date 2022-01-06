@@ -1,7 +1,7 @@
 local name = "files";
 local browser = "firefox";
 
-local build(arch, test_ui) = {
+local build(arch, test_ui) = [ {
     kind: "pipeline",
     type: "docker",
     name: arch,
@@ -173,25 +173,6 @@ local build(arch, test_ui) = {
             when: {
               status: [ "failure", "success" ]
             }
-        },
-        {
-            name: "promote",
-            image: "python:3.8-slim-buster",
-            environment: {
-                AWS_ACCESS_KEY_ID: {
-                    from_secret: "AWS_ACCESS_KEY_ID"
-                },
-                AWS_SECRET_ACCESS_KEY: {
-                    from_secret: "AWS_SECRET_ACCESS_KEY"
-                }
-            },
-            commands: [
-              "pip install syncloud-lib s3cmd",
-              "syncloud-promote.sh " + name + " " + arch
-            ],
-            when: {
-              event: [ "promote" ]
-            }
         }
     ],
     trigger: {
@@ -270,10 +251,40 @@ local build(arch, test_ui) = {
             }
         }
     ]
-};
+}, 
+{
+    kind: "pipeline",
+    type: "docker",
+    name: arch,
+    platform: {
+        os: "linux",
+        arch: arch
+    },
+    steps: [
+    {
+            name: "promote",
+            image: "python:3.8-slim-buster",
+            environment: {
+                AWS_ACCESS_KEY_ID: {
+                    from_secret: "AWS_ACCESS_KEY_ID"
+                },
+                AWS_SECRET_ACCESS_KEY: {
+                    from_secret: "AWS_SECRET_ACCESS_KEY"
+                }
+            },
+            commands: [
+              "pip install syncloud-lib s3cmd",
+              "syncloud-promote.sh " + name + " " + arch
+            ]
+      }
+     ],
+     trigger: {
+      event: [
+        "promote"
+      ]
+    }
+}];
 
-[
-    build("arm", false),
-    build("amd64", true),
-    build("arm64", false)
-]
+build("arm", false) +
+build("amd64", true) + 
+build("arm64", false)
