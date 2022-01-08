@@ -151,7 +151,7 @@ local build(arch, test_ui) = [ {
               "PACKAGE=$(cat package.name)",
               "apt update && apt install -y wget",
               "wget https://github.com/syncloud/snapd/releases/download/1/syncloud-release-" + arch,
-              "syncloud-release-* release -f $PACKAGE -b $DRONE_BRANCH"
+              "./syncloud-release-* release -f $PACKAGE -b $DRONE_BRANCH"
             ]
         }] + [
         {
