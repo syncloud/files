@@ -138,7 +138,7 @@ local build(arch, test_ui) = [ {
         } ] else [] ) +[
         {
             name: "upload",
-            image: "python:3.8-slim-buster",
+            image: "debian:buster-slim",
             environment: {
                 AWS_ACCESS_KEY_ID: {
                     from_secret: "AWS_ACCESS_KEY_ID"
@@ -149,8 +149,10 @@ local build(arch, test_ui) = [ {
             },
             commands: [
               "PACKAGE=$(cat package.name)",
-              "pip install syncloud-lib s3cmd",
-              "syncloud-upload-v2.sh $DRONE_BRANCH $PACKAGE"
+              "apt update && apt install -y wget",
+              "wget https://github.com/syncloud/snapd/releases/download/1/syncloud-release-" + arch,
+              "chmod +x syncloud-release-*",
+              "./syncloud-release-* publish -f $PACKAGE -b $DRONE_BRANCH"
             ]
         }] + [
         {
@@ -263,7 +265,7 @@ local build(arch, test_ui) = [ {
     steps: [
     {
             name: "promote",
-            image: "python:3.8-slim-buster",
+            image: "debian:buster-slim",
             environment: {
                 AWS_ACCESS_KEY_ID: {
                     from_secret: "AWS_ACCESS_KEY_ID"
@@ -273,8 +275,10 @@ local build(arch, test_ui) = [ {
                 }
             },
             commands: [
-              "pip install syncloud-lib s3cmd",
-              "syncloud-promote.sh " + name + " $(dpkg --print-architecture)"
+              "apt update && apt install -y wget",
+              "wget https://github.com/syncloud/snapd/releases/download/1/syncloud-release-" + arch + " -O release",
+              "chmod +x release",
+              "./release promote -n " + name + " -a $(dpkg --print-architecture)"
             ]
       }
      ],
