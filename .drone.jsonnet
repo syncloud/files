@@ -265,7 +265,7 @@ local build(arch, test_ui) = [ {
     steps: [
     {
             name: "promote",
-            image: "python:3.8-slim-buster",
+            image: "debian:buster-slim",
             environment: {
                 AWS_ACCESS_KEY_ID: {
                     from_secret: "AWS_ACCESS_KEY_ID"
@@ -275,8 +275,10 @@ local build(arch, test_ui) = [ {
                 }
             },
             commands: [
-              "pip install syncloud-lib s3cmd",
-              "syncloud-promote.sh " + name + " $(dpkg --print-architecture)"
+              "apt update && apt install -y wget",
+              "wget https://github.com/syncloud/snapd/releases/download/1/syncloud-release-" + arch + " -O release",
+              "chmod +x release",
+              "./release promote -n " + name + " -a $(dpkg --print-architecture)"
             ]
       }
      ],
