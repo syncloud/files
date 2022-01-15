@@ -37,7 +37,7 @@ def module_setup(request, platform_data_dir, data_dir, artifact_dir, device):
 def test_start(module_setup, device, app, domain, device_host):
     add_host_alias(app, device_host, domain)
     device.run_ssh('date', retries=100, throw=True)
-
+    device.run_ssh('/snap/platform/current/bin/upgrade-snapd.sh', throw=True)
 
 def test_activate_device(device):
     response = device.activate_custom()
