@@ -153,8 +153,11 @@ local build(arch, test_ui) = [ {
               "wget https://github.com/syncloud/snapd/releases/download/1/syncloud-release-" + arch,
               "chmod +x syncloud-release-*",
               "./syncloud-release-* publish -f $PACKAGE -b $DRONE_BRANCH"
-            ]
-        }] + [
+            ],
+            when: {
+                branch: ["stable", "master"]
+            }
+        }
         {
             name: "artifact",
             image: "appleboy/drone-scp:1.6.2",
