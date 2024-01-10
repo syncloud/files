@@ -20,9 +20,9 @@ ARCH=$(dpkg-architecture -q DEB_HOST_ARCH)
 
 rm -rf ${DIR}/*.snap
 mkdir ${SNAP_DIR}
-cp -r ${DIR}/build/${NAME}/* ${SNAP_DIR}/
-cp -r ${DIR}/snap/meta ${SNAP_DIR}/
-cp ${DIR}/snap/snap.yaml ${SNAP_DIR}/meta/snap.yaml
+cp -r ${DIR}/build/${NAME}/* ${SNAP_DIR}
+cp -r ${DIR}/meta ${SNAP_DIR}
+
 echo "version: $VERSION" >> ${SNAP_DIR}/meta/snap.yaml
 echo "architectures:" >> ${SNAP_DIR}/meta/snap.yaml
 echo "- ${ARCH}" >> ${SNAP_DIR}/meta/snap.yaml
