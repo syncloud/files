@@ -5,6 +5,7 @@ DIR=$( cd "$( dirname "$0}" )" && pwd )
 cd $DIR
 BUILD_DIR=${DIR}/../build/files/python
 while ! docker build -t python:syncloud . ; do
+  sleep 2
   echo "retry docker"
 done
 docker run --rm python:syncloud python --help
