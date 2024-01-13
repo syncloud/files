@@ -1,15 +1,12 @@
-#!/bin/bash -xe
+#!/bin/sh -xe
 
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-
-apt update
-apt install -y libltdl7 libnss3
+DIR=$( cd "$( dirname "$0}" )" && pwd )
 
 cd $DIR
 BUILD_DIR=${DIR}/../build/files/python
-docker ps -a -q --filter ancestor=python:syncloud --format="{{.ID}}" | xargs docker stop | xargs docker rm || true
-docker rmi python:syncloud || true
-docker build -t python:syncloud .
+while ! docker build -t python:syncloud . ; do
+  echo "retry docker"
+done
 docker run --rm python:syncloud python --help
 docker run --rm python:syncloud uwsgi --help
 docker create --name=python python:syncloud

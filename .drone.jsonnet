@@ -3,7 +3,7 @@ local browser = "firefox";
 local selenium = "4.0.0-beta-3-prerelease-20210402";
 local deployer = "https://github.com/syncloud/store/releases/download/4/syncloud-release";
 
-local build(arch, test_ui) = [ {
+local build(arch, test_ui, dind) = [ {
     kind: "pipeline",
     type: "docker",
     name: arch,
@@ -21,20 +21,16 @@ local build(arch, test_ui) = [ {
         },
          {
                name: "build python",
-               image: "debian:buster-slim",
-               commands: [
-                   "./python/build.sh"
-               ],
-               volumes: [
-                   {
-                       name: "docker",
-                       path: "/usr/bin/docker"
-                   },
-                   {
-                       name: "docker.sock",
-                       path: "/var/run/docker.sock"
-                   }
-               ]
+            image: "docker:" + dind,
+            commands: [
+                "./python/build.sh"
+            ],
+            volumes: [
+                {
+                    name: "dockersock",
+                    path: "/var/run"
+                }
+            ]
            },
         {
             name: "download",
@@ -178,6 +174,17 @@ local build(arch, test_ui) = [ {
       ]
     },
     services: [
+ {
+            name: "docker",
+            image: "docker:" + dind,
+            privileged: true,
+            volumes: [
+                {
+                    name: "dockersock",
+                    path: "/var/run"
+                }
+            ]
+        },
         {
             name: name + ".buster.com",
             image: "syncloud/platform-buster-" + arch + ":21.10",
@@ -220,20 +227,12 @@ local build(arch, test_ui) = [ {
             temp: {}
         },
         {
-            name: "docker",
-            host: {
-                path: "/usr/bin/docker"
-            }
-        },
-        {
-            name: "docker.sock",
-            host: {
-                path: "/var/run/docker.sock"
-            }
+            name: "dockersock",
+            temp: {}
         }
     ]
 }];
 
-build("amd64", true) +
-build("arm64", false) +
-build("arm", false)
+build("amd64", true, "20.10.21-dind") +
+build("arm64", false, "19.03.8-dind") +
+build("arm", false, "19.03.8-dind")
