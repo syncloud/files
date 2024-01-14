@@ -1,7 +1,9 @@
 local name = "files";
 local browser = "firefox";
+local selenium = "4.0.0-beta-3-prerelease-20210402";
+local deployer = "https://github.com/syncloud/store/releases/download/4/syncloud-release";
 
-local build(arch, test_ui) = [ {
+local build(arch, test_ui, dind) = [ {
     kind: "pipeline",
     type: "docker",
     name: arch,
@@ -19,20 +21,16 @@ local build(arch, test_ui) = [ {
         },
          {
                name: "build python",
-               image: "debian:buster-slim",
-               commands: [
-                   "./python/build.sh"
-               ],
-               volumes: [
-                   {
-                       name: "docker",
-                       path: "/usr/bin/docker"
-                   },
-                   {
-                       name: "docker.sock",
-                       path: "/var/run/docker.sock"
-                   }
-               ]
+            image: "docker:" + dind,
+            commands: [
+                "./python/build.sh"
+            ],
+            volumes: [
+                {
+                    name: "dockersock",
+                    path: "/var/run"
+                }
+            ]
            },
         {
             name: "download",
@@ -56,19 +54,7 @@ local build(arch, test_ui) = [ {
                 "VERSION=$(cat version)",
                 "./package.sh " + name + " $VERSION"
             ]
-        }
-        ] + ( if arch != "arm64" then [
-        {
-            name: "test-integration-jessie",
-            image: "python:3.8-slim-buster",
-            commands: [
-              "apt-get update && apt-get install -y sshpass openssh-client netcat",
-              "APP_ARCHIVE_PATH=$(realpath $(cat package.name))",
-              "cd integration",
-              "pip install -r requirements.txt",
-              "py.test -x -s verify.py --distro=jessie --domain=jessie.com --app-archive-path=$APP_ARCHIVE_PATH --device-host=" + name + ".jessie.com --app=" + name
-            ]
-        }] else []) + [
+        },
         {
             name: "test-integration-buster",
             image: "python:3.8-slim-buster",
@@ -80,34 +66,6 @@ local build(arch, test_ui) = [ {
               "py.test -x -s verify.py --distro=buster --domain=buster.com --app-archive-path=$APP_ARCHIVE_PATH --device-host=" + name + ".buster.com --app=" + name
             ]
         }] + ( if test_ui then [
-        {
-            name: "test-ui-desktop-jessie",
-            image: "python:3.8-slim-buster",
-            commands: [
-              "apt-get update && apt-get install -y sshpass openssh-client netcat",
-              "cd integration",
-              "pip install -r requirements.txt",
-              "py.test -x -s test-ui.py --distro=jessie --ui-mode=desktop --domain=jessie.com --device-host=" + name + ".jessie.com --app=" + name + " --browser=" + browser,
-            ],
-            volumes: [{
-                name: "shm",
-                path: "/dev/shm"
-            }]
-        },
-        {
-            name: "test-ui-mobile-jessie",
-            image: "python:3.8-slim-buster",
-            commands: [
-              "apt-get update && apt-get install -y sshpass openssh-client netcat",
-              "cd integration",
-              "pip install -r requirements.txt",
-              "py.test -x -s test-ui.py --distro=jessie --ui-mode=mobile --domain=jessie.com --device-host=" + name + ".jessie.com --app=" + name + " --browser=" + browser,
-            ],
-            volumes: [{
-                name: "shm",
-                path: "/dev/shm"
-            }]
-        },
         {
             name: "test-ui-desktop-buster",
             image: "python:3.8-slim-buster",
@@ -136,31 +94,60 @@ local build(arch, test_ui) = [ {
                 path: "/dev/shm"
             }]
         } ] else [] ) +[
+       {
+               name: "upload",
+               image: "debian:buster-slim",
+               environment: {
+                   AWS_ACCESS_KEY_ID: {
+                       from_secret: "AWS_ACCESS_KEY_ID"
+                   },
+                   AWS_SECRET_ACCESS_KEY: {
+                       from_secret: "AWS_SECRET_ACCESS_KEY"
+                   },
+                   SYNCLOUD_TOKEN: {
+                       from_secret: "SYNCLOUD_TOKEN"
+                   }
+               },
+               commands: [
+                 "PACKAGE=$(cat package.name)",
+                 "apt update && apt install -y wget",
+                 "wget " + deployer + "-" + arch + " -O release --progress=dot:giga",
+                 "chmod +x release",
+                 "./release publish -f $PACKAGE -b $DRONE_BRANCH"
+                ],
+               when: {
+                   branch: ["stable", "master"],
+                   event: ["push"]
+               }
+        },
         {
-            name: "upload",
-            image: "debian:buster-slim",
-            environment: {
-                AWS_ACCESS_KEY_ID: {
-                    from_secret: "AWS_ACCESS_KEY_ID"
-                },
-                AWS_SECRET_ACCESS_KEY: {
-                    from_secret: "AWS_SECRET_ACCESS_KEY"
-                }
+                  name: "promote",
+                  image: "debian:buster-slim",
+                  environment: {
+                      AWS_ACCESS_KEY_ID: {
+                          from_secret: "AWS_ACCESS_KEY_ID"
+                      },
+                      AWS_SECRET_ACCESS_KEY: {
+                          from_secret: "AWS_SECRET_ACCESS_KEY"
+                      },
+                       SYNCLOUD_TOKEN: {
+                           from_secret: "SYNCLOUD_TOKEN"
+                       }
+                  },
+                  commands: [
+                    "apt update && apt install -y wget",
+                    "wget " + deployer + "-" + arch + " -O release --progress=dot:giga",
+                    "chmod +x release",
+                    "./release promote -n " + name + " -a $(dpkg --print-architecture)"
+                  ],
+                  when: {
+                      branch: ["stable"],
+                      event: ["push"]
+                  }
             },
-            commands: [
-              "PACKAGE=$(cat package.name)",
-              "apt update && apt install -y wget",
-              "wget https://github.com/syncloud/snapd/releases/download/1/syncloud-release-" + arch,
-              "chmod +x syncloud-release-*",
-              "./syncloud-release-* publish -f $PACKAGE -b $DRONE_BRANCH"
-            ],
-            when: {
-                branch: ["stable", "master"]
-            }
-        }
         {
             name: "artifact",
-            image: "appleboy/drone-scp:1.6.2",
+            image: "appleboy/drone-scp:1.6.4",
             settings: {
                 host: {
                     from_secret: "artifact_host"
@@ -186,22 +173,18 @@ local build(arch, test_ui) = [ {
         "pull_request"
       ]
     },
-    services: ( if arch != "arm64" then [
-        {
-            name: name + ".jessie.com",
-            image: "syncloud/platform-jessie-" + arch,
+    services: [
+ {
+            name: "docker",
+            image: "docker:" + dind,
             privileged: true,
             volumes: [
                 {
-                    name: "dbus",
-                    path: "/var/run/dbus"
-                },
-                {
-                    name: "dev",
-                    path: "/dev"
+                    name: "dockersock",
+                    path: "/var/run"
                 }
             ]
-        }] else []) + [
+        },
         {
             name: name + ".buster.com",
             image: "syncloud/platform-buster-" + arch + ":21.10",
@@ -219,7 +202,7 @@ local build(arch, test_ui) = [ {
         }
     ] + ( if test_ui then [{
             name: "selenium",
-            image: "selenium/standalone-" + browser + ":4.0.0-beta-3-prerelease-20210402",
+            image: "selenium/standalone-" + browser + ":" + selenium,
             volumes: [{
                 name: "shm",
                 path: "/dev/shm"
@@ -244,54 +227,12 @@ local build(arch, test_ui) = [ {
             temp: {}
         },
         {
-            name: "docker",
-            host: {
-                path: "/usr/bin/docker"
-            }
-        },
-        {
-            name: "docker.sock",
-            host: {
-                path: "/var/run/docker.sock"
-            }
+            name: "dockersock",
+            temp: {}
         }
     ]
-}, 
-{
-    kind: "pipeline",
-    type: "docker",
-    name: "promote-" + arch,
-    platform: {
-        os: "linux",
-        arch: arch
-    },
-    steps: [
-    {
-            name: "promote",
-            image: "debian:buster-slim",
-            environment: {
-                AWS_ACCESS_KEY_ID: {
-                    from_secret: "AWS_ACCESS_KEY_ID"
-                },
-                AWS_SECRET_ACCESS_KEY: {
-                    from_secret: "AWS_SECRET_ACCESS_KEY"
-                }
-            },
-            commands: [
-              "apt update && apt install -y wget",
-              "wget https://github.com/syncloud/snapd/releases/download/1/syncloud-release-" + arch + " -O release --progress=dot:giga",
-              "chmod +x release",
-              "./release promote -n " + name + " -a $(dpkg --print-architecture)"
-            ]
-      }
-     ],
-     trigger: {
-      event: [
-        "promote"
-      ]
-    }
 }];
 
-build("arm", false) +
-build("amd64", true) + 
-build("arm64", false)
+build("amd64", true, "20.10.21-dind") +
+build("arm64", false, "19.03.8-dind") +
+build("arm", false, "19.03.8-dind")
