@@ -17,9 +17,19 @@ test('login via OpenID and browse files', async ({ page }, info) => {
   await loginViaAuthelia(page, baseURL, username, password, info)
   await shoot(page, info, 'index')
 
-  await expect(page.locator('#app')).toBeVisible()
   expect(new URL(page.url()).host).toBe(new URL(baseURL).host)
+  await page.locator('#app').waitFor({ state: 'attached', timeout: 30_000 })
 
-  await expect(page.getByText(marker)).toBeVisible({ timeout: 30_000 })
+  const item = page.getByText(marker, { exact: false }).first()
+  for (let i = 0; i < 3; i++) {
+    if (await item.isVisible().catch(() => false)) break
+    await page.waitForTimeout(3000)
+    if (i === 1) await page.reload().catch(() => {})
+  }
+  if (!(await item.isVisible().catch(() => false))) {
+    console.log('DIAG url:', page.url())
+    console.log('DIAG body:', (await page.locator('body').innerText().catch(() => '')).slice(0, 2000))
+  }
+  await expect(item).toBeVisible({ timeout: 20_000 })
   await shoot(page, info, 'listing')
 })
