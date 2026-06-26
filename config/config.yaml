@@ -1,0 +1,32 @@
+server:
+  socket: "{{ .Socket }}"
+  database: "{{ .Database }}"
+  cacheDir: "{{ .CacheDir }}"
+  logging:
+    - levels: "info|warning|error"
+      output: "stdout"
+  sources:
+    - path: "{{ .StorageDir }}"
+      name: files
+      config:
+        defaultEnabled: true
+        defaultUserScope: "/"
+
+auth:
+  tokenExpirationHours: 2
+  key: "{{ .Key }}"
+  methods:
+    password:
+      enabled: false
+    oidc:
+      enabled: true
+      clientId: "{{ .ClientId }}"
+      clientSecret: "{{ .ClientSecret }}"
+      issuerUrl: "{{ .AuthUrl }}"
+      scopes: "openid email profile groups"
+      userIdentifier: "preferred_username"
+      groupsClaim: "groups"
+      adminGroup: "{{ .AdminGroup }}"
+
+frontend:
+  name: Files
