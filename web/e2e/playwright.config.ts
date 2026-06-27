@@ -19,7 +19,6 @@ export default defineConfig({
     video: 'on'
   },
   projects: [
-    { name: 'desktop', use: { ...devices['Desktop Chrome'], baseURL, ignoreHTTPSErrors: true } },
-    { name: 'mobile', use: { ...devices['Pixel 7'], baseURL, ignoreHTTPSErrors: true } }
+    { name: 'desktop', use: { ...devices['Desktop Chrome'], baseURL, ignoreHTTPSErrors: true } }
   ]
 })

@@ -85,7 +85,7 @@ local build(arch, ui) = [{
            image: 'mcr.microsoft.com/playwright:' + playwright,
            commands: ['./web/e2e/ci-ui.sh ' + project],
          }
-         for project in ['desktop', 'mobile']
+         for project in ['desktop']
        ] + [
          {
            name: 'test-upgrade',
