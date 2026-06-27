@@ -13,17 +13,12 @@ BUILD_DIR=${DIR}/../build/snap/filebrowser
 mkdir -p ${BUILD_DIR}
 
 ARCH=$(dpkg --print-architecture)
-case ${ARCH} in
-    amd64) ASSET=linux-amd64-filebrowser ;;
-    arm64) ASSET=linux-arm64-filebrowser ;;
-    armhf) ASSET=linux-armv7-filebrowser ;;
-    *) echo "unsupported arch ${ARCH}"; exit 1 ;;
-esac
+[ "${ARCH}" = "armhf" ] && ARCH=armv7
 
 apt-get update
 apt-get install -y wget ca-certificates
 
 wget -c --progress=dot:giga \
-    https://github.com/gtsteffaniak/filebrowser/releases/download/v${VERSION}/${ASSET} \
+    https://github.com/gtsteffaniak/filebrowser/releases/download/v${VERSION}/linux-${ARCH}-filebrowser \
     -O ${BUILD_DIR}/filebrowser
 chmod +x ${BUILD_DIR}/filebrowser
