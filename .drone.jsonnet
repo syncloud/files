@@ -90,12 +90,12 @@ local build(arch, ui) = [{
          {
            name: 'test-upgrade',
            image: 'python:' + python,
-           commands: ['./test/ci-upgrade.sh bookworm ' + arch],
+           commands: ['./test/ci-upgrade.sh buster ' + arch],
          },
          {
            name: 'test-ui-after-upgrade',
            image: 'mcr.microsoft.com/playwright:' + playwright,
-           commands: ['./web/e2e/ci-ui.sh desktop'],
+           commands: ['PLAYWRIGHT_DOMAIN=buster.com ./web/e2e/ci-ui.sh desktop'],
          },
        ] else []) + [
     {
