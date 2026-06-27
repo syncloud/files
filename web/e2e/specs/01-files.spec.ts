@@ -2,17 +2,16 @@ import { test, expect } from '@playwright/test'
 import { shoot } from '../helpers/screenshot'
 import { loginViaAuthelia } from '../helpers/auth'
 
-const baseURL = `https://files.${process.env.PLAYWRIGHT_DOMAIN || 'bookworm.com'}`
-const username = process.env.PLAYWRIGHT_USER || 'user'
-const password = process.env.PLAYWRIGHT_PASSWORD || 'Password1'
+const username = process.env.PLAYWRIGHT_USER!
+const password = process.env.PLAYWRIGHT_PASSWORD!
 
-test('browse read-only system source, create dir and file in writable source', async ({ page }, info) => {
+test('browse read-only system source, create dir and file in writable source', async ({ page, baseURL }, info) => {
   const stamp = Date.now()
   const dir = `e2e-dir-${stamp}`
   const file = `note-${stamp}.txt`
   const content = `hello from syncloud e2e ${stamp}`
 
-  await loginViaAuthelia(page, baseURL, username, password)
+  await loginViaAuthelia(page, baseURL!, username, password)
   await page.locator('a.source-button[aria-label="device"]').waitFor({ state: 'visible' })
   await shoot(page, info, '01-logged-in')
 

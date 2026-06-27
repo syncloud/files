@@ -1,7 +1,6 @@
 import { defineConfig, devices } from '@playwright/test'
 
-const domain = process.env.PLAYWRIGHT_DOMAIN || 'bookworm.com'
-const baseURL = `https://files.${domain}`
+const baseURL = `https://files.${process.env.PLAYWRIGHT_DOMAIN}`
 
 export default defineConfig({
   testDir: './specs',
