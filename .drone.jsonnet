@@ -86,6 +86,17 @@ local build(arch, ui) = [{
            commands: ['./web/e2e/ci-ui.sh ' + project],
          }
          for project in ['desktop', 'mobile']
+       ] + [
+         {
+           name: 'test-upgrade',
+           image: 'python:' + python,
+           commands: ['./test/ci-upgrade.sh bookworm ' + arch],
+         },
+         {
+           name: 'test-ui-after-upgrade',
+           image: 'mcr.microsoft.com/playwright:' + playwright,
+           commands: ['./web/e2e/ci-ui.sh desktop'],
+         },
        ] else []) + [
     {
       name: 'publish',
