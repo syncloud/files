@@ -5,7 +5,7 @@ local nginx = '1.24.0';
 local python = '3.12-slim-bookworm';
 local platform = '26.04.10';
 local playwright = 'v1.59.1-jammy';
-local store_publisher = 'stable-291';
+local store_publisher = 'stable-303';
 local distros = ['bookworm', 'buster'];
 
 local platform_image(distro, arch) =
