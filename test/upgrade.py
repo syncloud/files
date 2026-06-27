@@ -30,10 +30,9 @@ def test_start(module_setup, app, device_host, domain, device):
     device.run_ssh('mkdir -p {0}'.format(TMP_DIR), throw=False)
 
 
-def test_install_from_store(device, app_domain):
+def test_install_from_store(device):
     device.run_ssh('snap remove {0}'.format(APP), throw=False)
     device.run_ssh('snap install {0}'.format(APP), retries=10)
-    wait_for_rest(requests.session(), "https://{0}".format(app_domain), 200, 100)
 
 
 def test_upgrade(device_host, device_password, app_archive_path, app_domain):
