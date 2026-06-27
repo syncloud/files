@@ -11,6 +11,18 @@ server:
       config:
         defaultEnabled: true
         defaultUserScope: "/"
+    - path: "/"
+      name: device
+      config:
+        defaultEnabled: true
+        readOnly: true
+        defaultUserScope: "/"
+        rules:
+          - folderPath: "/proc"
+          - folderPath: "/sys"
+          - folderPath: "/dev"
+          - folderPath: "/run"
+          - folderPath: "/var/cache"
 
 auth:
   tokenExpirationHours: 2
@@ -27,6 +39,15 @@ auth:
       userIdentifier: "preferred_username"
       groupsClaim: "groups"
       adminGroup: "{{ .AdminGroup }}"
+
+userDefaults:
+  account:
+    permissions:
+      create: true
+      modify: true
+      delete: true
+      download: true
+      share: true
 
 frontend:
   name: Files

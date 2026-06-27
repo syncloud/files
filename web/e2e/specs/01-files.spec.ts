@@ -20,6 +20,9 @@ test('login via OpenID and browse files', async ({ page }, info) => {
   expect(new URL(page.url()).host).toBe(new URL(baseURL).host)
   await page.locator('#app').waitFor({ state: 'attached', timeout: 30_000 })
 
+  await page.goto(`${baseURL}/files/files/`)
+  await page.waitForLoadState('networkidle').catch(() => {})
+
   const item = page.getByText(marker, { exact: false }).first()
   for (let i = 0; i < 3; i++) {
     if (await item.isVisible().catch(() => false)) break
