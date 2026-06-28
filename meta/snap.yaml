@@ -1,20 +1,38 @@
+name: files
+summary: File Browser
+description: Web file browser for your device storage
+
 apps:
+  filebrowser:
+    user: files
+    command: bin/service.filebrowser.sh
+    daemon: simple
+    restart-condition: always
+    start-timeout: 600s
+    restart-delay: 10s
+
   nginx:
+    user: files
     command: bin/service.nginx.sh
     daemon: simple
-    plugs:
-    - network
-    - network-bind
     restart-condition: always
-  uwsgi:
-    command: bin/service.uwsgi.sh
-    daemon: notify
-    plugs:
-    - network
-    - network-bind
-    restart-condition: always
-confinement: strict
-description: Files
-grade: stable
-name: files
-summary: Files
+    start-timeout: 600s
+    restart-delay: 10s
+
+  cli:
+    command: bin/cli
+
+  storage-change:
+    command: bin/cli storage-change
+
+  access-change:
+    command: bin/cli access-change
+
+  backup-pre-stop:
+    command: bin/cli backup-pre-stop
+
+  restore-pre-start:
+    command: bin/cli restore-pre-start
+
+  restore-post-start:
+    command: bin/cli restore-post-start

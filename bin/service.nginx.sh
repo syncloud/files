@@ -1,7 +1,4 @@
 #!/bin/bash -e
 
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )
-
 /bin/rm -f ${SNAP_COMMON}/web.socket
-/bin/rm -f ${SNAP_COMMON}/log/nginx*.log
-exec ${DIR}/nginx/sbin/nginx -c ${SNAP_COMMON}/config/nginx/nginx.conf -p ${DIR}/nginx -e stderr
+exec ${SNAP}/nginx/bin/nginx.sh -c ${SNAP_DATA}/config/nginx.conf -p ${SNAP}/nginx -e stderr
