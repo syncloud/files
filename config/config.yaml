@@ -1,0 +1,53 @@
+server:
+  socket: "{{ .Socket }}"
+  database: "{{ .Database }}"
+  cacheDir: "{{ .CacheDir }}"
+  logging:
+    - levels: "info|warning|error"
+      output: "stdout"
+  sources:
+    - path: "{{ .StorageDir }}"
+      name: files
+      config:
+        defaultEnabled: true
+        defaultUserScope: "/"
+    - path: "/"
+      name: device
+      config:
+        defaultEnabled: true
+        readOnly: true
+        defaultUserScope: "/"
+        rules:
+          - folderPath: "/proc"
+          - folderPath: "/sys"
+          - folderPath: "/dev"
+          - folderPath: "/run"
+          - folderPath: "/var/cache"
+
+auth:
+  tokenExpirationHours: 2
+  key: "{{ .Key }}"
+  methods:
+    password:
+      enabled: false
+    oidc:
+      enabled: true
+      clientId: "{{ .ClientId }}"
+      clientSecret: "{{ .ClientSecret }}"
+      issuerUrl: "{{ .AuthUrl }}"
+      scopes: "openid email profile groups"
+      userIdentifier: "preferred_username"
+      groupsClaim: "groups"
+      adminGroup: "{{ .AdminGroup }}"
+
+userDefaults:
+  account:
+    permissions:
+      create: true
+      modify: true
+      delete: true
+      download: true
+      share: true
+
+frontend:
+  name: Files
