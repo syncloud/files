@@ -13,13 +13,17 @@ test('land on device source, create dir and file in writable source', async ({ p
 
   await loginViaAuthelia(page, baseURL!, username, password)
 
+  // welcome prompt only appears when filebrowser created its database on this
+  // start (ShowFirstLogin = IsFirstLoad && admin), so it is absent after an upgrade
   const acknowledge = page.locator('button[aria-label^="Acknowledge"]')
-  await acknowledge.waitFor({ state: 'visible' })
-  await shoot(page, info, '01-first-login-welcome')
-  await acknowledge.click()
-  await shoot(page, info, '02-logged-in')
+  await page.addLocatorHandler(acknowledge, async (button) => {
+    await shoot(page, info, '01-first-login-welcome')
+    await button.click()
+  }, { times: 1 })
 
   await page.waitForURL((url) => url.pathname.startsWith('/files/device'))
+  await shoot(page, info, '02-logged-in')
+
   await page.locator('a[aria-label="etc"]').waitFor({ state: 'visible' })
   await shoot(page, info, '03-device-root')
 
