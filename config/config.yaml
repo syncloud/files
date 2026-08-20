@@ -6,11 +6,6 @@ server:
     - levels: "info|warning|error"
       output: "stdout"
   sources:
-    - path: "{{ .StorageDir }}"
-      name: files
-      config:
-        defaultEnabled: true
-        defaultUserScope: "/"
     - path: "/"
       name: device
       config:
@@ -23,6 +18,15 @@ server:
           - folderPath: "/dev"
           - folderPath: "/run"
           - folderPath: "/var/cache"
+          - folderPath: "/opt/disk"
+            viewable: true
+          - folderPath: "/data"
+            viewable: true
+    - path: "{{ .StorageDir }}"
+      name: files
+      config:
+        defaultEnabled: true
+        defaultUserScope: "/"
 
 auth:
   tokenExpirationHours: 2
