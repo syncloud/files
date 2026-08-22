@@ -5,7 +5,7 @@ import { loginViaAuthelia } from '../helpers/auth'
 const username = process.env.PLAYWRIGHT_USER!
 const password = process.env.PLAYWRIGHT_PASSWORD!
 
-test('browse read-only system source, create dir and file in writable source', async ({ page, baseURL }, info) => {
+test('land on device source, create dir and file in writable source', async ({ page, baseURL }, info) => {
   const stamp = Date.now()
   const dir = `e2e-dir-${stamp}`
   const file = `note-${stamp}.txt`
@@ -14,12 +14,14 @@ test('browse read-only system source, create dir and file in writable source', a
   await loginViaAuthelia(page, baseURL!, username, password)
 
   const acknowledge = page.locator('button[aria-label^="Acknowledge"]')
-  await acknowledge.waitFor({ state: 'visible' })
-  await shoot(page, info, '01-first-login-welcome')
-  await acknowledge.click()
+  await page.addLocatorHandler(acknowledge, async (button) => {
+    await shoot(page, info, '01-first-login-welcome')
+    await button.click()
+  }, { times: 1 })
+
+  await page.waitForURL((url) => url.pathname.startsWith('/files/device'))
   await shoot(page, info, '02-logged-in')
 
-  await page.locator('a.source-button[aria-label="device"]').click()
   await page.locator('a[aria-label="etc"]').waitFor({ state: 'visible' })
   await shoot(page, info, '03-device-root')
 
