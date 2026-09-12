@@ -106,7 +106,7 @@ local build(arch, ui) = [{
       },
       command: ['snap', '-c', '${DRONE_BRANCH}'],
       when: {
-        branch: ['master', 'stable'],
+        branch: ['stable'],
         event: ['push'],
       },
     },
