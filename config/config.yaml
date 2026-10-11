@@ -1,6 +1,7 @@
 server:
-  socket: "{{ .Socket }}"
-  database: "{{ .Database }}"
+  database:
+    path: "{{ .DatabaseSqlite }}"
+    migrateFrom: "${FILEBROWSER_MIGRATE_FROM}"
   cacheDir: "{{ .CacheDir }}"
   logging:
     - levels: "info|warning|error"
@@ -12,6 +13,12 @@ server:
         defaultEnabled: true
         readOnly: true
         defaultUserScope: "/"
+        defaultPermissions:
+          view: true
+          download: true
+          modify: true
+          create: true
+          delete: true
         rules:
           - folderPath: "/proc"
           - folderPath: "/sys"
@@ -27,10 +34,19 @@ server:
       config:
         defaultEnabled: true
         defaultUserScope: "/"
+        defaultPermissions:
+          view: true
+          download: true
+          modify: true
+          create: true
+          delete: true
+
+http:
+  socket: "{{ .Socket }}"
+  trustProxyHeaders: true
 
 auth:
   tokenExpirationHours: 2
-  key: "{{ .Key }}"
   methods:
     password:
       enabled: false
@@ -47,10 +63,6 @@ auth:
 userDefaults:
   account:
     permissions:
-      create: true
-      modify: true
-      delete: true
-      download: true
       share: true
 
 frontend:

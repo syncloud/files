@@ -1,5 +1,5 @@
 local name = 'files';
-local version = '1.4.0-stable';
+local version = '2.0.0-stable';
 local go = '1.24.0';
 local nginx = '1.24.0';
 local python = '3.12-slim-bookworm';

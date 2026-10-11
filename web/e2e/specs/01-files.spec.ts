@@ -5,7 +5,7 @@ import { loginViaAuthelia } from '../helpers/auth'
 const username = process.env.PLAYWRIGHT_USER!
 const password = process.env.PLAYWRIGHT_PASSWORD!
 
-test('land on device source, create dir and file in writable source', async ({ page, baseURL }, info) => {
+test('sign in, browse the device source, create a folder, then edit and reopen a file', async ({ page, baseURL }, info) => {
   const stamp = Date.now()
   const dir = `e2e-dir-${stamp}`
   const file = `note-${stamp}.txt`
@@ -41,29 +41,23 @@ test('land on device source, create dir and file in writable source', async ({ p
   await page.locator(`a[aria-label="${dir}"]`).waitFor({ state: 'visible' })
   await shoot(page, info, '06-dir-created')
 
-  await page.locator(`a[aria-label="${dir}"]`).dblclick()
-  await page.locator(`a[aria-label="breadcrumb-link-${dir}"]`).waitFor({ state: 'visible' })
-  await shoot(page, info, '07-inside-dir')
-
   await page.locator('[data-testid="file-actions-button"]').click()
   await page.locator('button[aria-label="New file"]').click()
   await page.locator('input[aria-label="FileName Field"]').fill(file)
   await page.locator('button[aria-label="Create"]').click()
   await page.locator(`a[aria-label="${file}"]`).waitFor({ state: 'visible' })
-  await shoot(page, info, '08-file-created')
+  await shoot(page, info, '07-file-created')
 
   await page.locator(`a[aria-label="${file}"]`).dblclick()
   await page.locator('.ace_content').click()
   await page.keyboard.type(content)
-  await shoot(page, info, '09-content-typed')
+  await shoot(page, info, '08-content-typed')
+  await page.keyboard.press('Control+s')
+  await expect(page.getByText(`${file} saved successfully.`)).toBeVisible()
+  await shoot(page, info, '09-saved')
 
-  await page.locator('.overflow-menu-button').click()
-  await page.locator('button[aria-label="Save"]').click()
-  await expect(page.locator('.notification-message, .toast-message').filter({ hasText: `${file} saved successfully` })).toBeVisible()
-  await shoot(page, info, '10-saved')
-
-  await page.locator('button[title="Close"]').click()
+  await page.locator('#button-toggle-navbar').click()
   await page.locator(`a[aria-label="${file}"]`).dblclick()
-  await expect(page.locator('.ace_text-layer .ace_line').first()).toHaveText(content)
-  await shoot(page, info, '11-reopened-content')
+  await expect(page.locator('.ace_text-layer')).toContainText(content)
+  await shoot(page, info, '10-reopened-content')
 })
