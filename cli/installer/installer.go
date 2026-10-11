@@ -1,8 +1,6 @@
 package installer
 
 import (
-	"crypto/rand"
-	"encoding/hex"
 	"fmt"
 	cp "github.com/otiai10/copy"
 	"github.com/syncloud/golib/config"
@@ -14,20 +12,19 @@ import (
 )
 
 type Variables struct {
-	App          string
-	AppDir       string
-	DataDir      string
-	CommonDir    string
-	StorageDir   string
-	AuthUrl      string
-	AppUrl       string
-	ClientId     string
-	ClientSecret string
-	AdminGroup   string
-	Key          string
-	Socket       string
-	Database     string
-	CacheDir     string
+	App            string
+	AppDir         string
+	DataDir        string
+	CommonDir      string
+	StorageDir     string
+	AuthUrl        string
+	AppUrl         string
+	ClientId       string
+	ClientSecret   string
+	AdminGroup     string
+	Socket         string
+	DatabaseSqlite string
+	CacheDir       string
 }
 
 const (
@@ -43,7 +40,6 @@ type Installer struct {
 	currentVersionFile string
 	platformClient     *platform.Client
 	installFile        string
-	keyFile            string
 	logger             *zap.Logger
 }
 
@@ -53,7 +49,6 @@ func New(logger *zap.Logger) *Installer {
 		currentVersionFile: path.Join(DataDir, "version"),
 		platformClient:     platform.New(),
 		installFile:        path.Join(CommonDir, "installed"),
-		keyFile:            path.Join(DataDir, "jwt.key"),
 		logger:             logger,
 	}
 }
@@ -164,26 +159,21 @@ func (i *Installer) GenerateConfig(storageDir string) error {
 	if err != nil {
 		return err
 	}
-	key, err := i.SigningKey()
-	if err != nil {
-		return err
-	}
 
 	variables := Variables{
-		App:          App,
-		AppDir:       AppDir,
-		DataDir:      DataDir,
-		CommonDir:    CommonDir,
-		StorageDir:   storageDir,
-		AuthUrl:      authUrl,
-		AppUrl:       appUrl,
-		ClientId:     App,
-		ClientSecret: secret,
-		AdminGroup:   AdminGroup,
-		Key:          key,
-		Socket:       path.Join(DataDir, "filebrowser.sock"),
-		Database:     path.Join(DataDir, "database.db"),
-		CacheDir:     path.Join(DataDir, "cache"),
+		App:            App,
+		AppDir:         AppDir,
+		DataDir:        DataDir,
+		CommonDir:      CommonDir,
+		StorageDir:     storageDir,
+		AuthUrl:        authUrl,
+		AppUrl:         appUrl,
+		ClientId:       App,
+		ClientSecret:   secret,
+		AdminGroup:     AdminGroup,
+		Socket:         path.Join(DataDir, "filebrowser.sock"),
+		DatabaseSqlite: path.Join(DataDir, "filebrowser.sqlite"),
+		CacheDir:       path.Join(DataDir, "cache"),
 	}
 
 	return config.Generate(
@@ -191,22 +181,6 @@ func (i *Installer) GenerateConfig(storageDir string) error {
 		path.Join(DataDir, "config"),
 		variables,
 	)
-}
-
-func (i *Installer) SigningKey() (string, error) {
-	existing, err := os.ReadFile(i.keyFile)
-	if err == nil && len(existing) > 0 {
-		return string(existing), nil
-	}
-	buf := make([]byte, 32)
-	if _, err := rand.Read(buf); err != nil {
-		return "", err
-	}
-	key := hex.EncodeToString(buf)
-	if err := os.WriteFile(i.keyFile, []byte(key), 0640); err != nil {
-		return "", err
-	}
-	return key, nil
 }
 
 func (i *Installer) FixPermissions() error {
