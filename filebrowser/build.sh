@@ -15,10 +15,9 @@ mkdir -p ${BUILD_DIR}
 ARCH=$(dpkg --print-architecture)
 [ "${ARCH}" = "armhf" ] && ARCH=armv7
 
-apt-get update
-apt-get install -y wget ca-certificates
+${DIR}/../apt.sh wget ca-certificates
 
-wget -c --progress=dot:giga \
+${DIR}/../download-retry.sh \
     https://github.com/gtsteffaniak/filebrowser/releases/download/v${VERSION}/linux-${ARCH}-filebrowser \
-    -O ${BUILD_DIR}/filebrowser
+    ${BUILD_DIR}/filebrowser
 chmod +x ${BUILD_DIR}/filebrowser

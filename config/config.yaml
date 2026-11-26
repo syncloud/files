@@ -1,7 +1,6 @@
 server:
   database:
     path: "{{ .DatabaseSqlite }}"
-    migrateFrom: "${FILEBROWSER_MIGRATE_FROM}"
   cacheDir: "{{ .CacheDir }}"
   logging:
     - levels: "info|warning|error"
