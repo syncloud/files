@@ -1,15 +1,17 @@
 local name = 'files';
-local version = '2.0.0-stable';
-local go = '1.24.0';
+local version = '2.1.0-stable';
+local go = '1.27.4';
 local nginx = '1.30.7';
 local python = '3.12-slim-bookworm';
-local platform = '26.04.10';
-local playwright = 'v1.59.1-jammy';
-local store_publisher = 'stable-346';
+local platform = '26.10.02';
+local playwright = 'mcr.microsoft.com/playwright:v1.59.1-jammy';
+local store_publisher = 'stable-369';
 local distros = ['bookworm', 'buster'];
+local distro_default = 'bookworm';
+local snapd_hold = "mkdir -p /etc/systemd/system/snapd.service.d && printf '[Service]\\nExecStartPost=/bin/sh -c \"/usr/bin/snap set system refresh.hold=2099-01-01T00:00:00Z\"\\n' > /etc/systemd/system/snapd.service.d/disable-refresh.conf && exec /sbin/init";
 
-local platform_image(distro, arch) =
-  'syncloud/platform-' + distro + '-' + arch + ':' + platform;
+local platform_image(distro) =
+  'syncloud/platform-' + distro + ':' + platform;
 
 local build(arch, ui) = [{
   kind: 'pipeline',
@@ -23,14 +25,12 @@ local build(arch, ui) = [{
     {
       name: 'nginx',
       image: 'nginx:' + nginx,
-      commands: [
-        './nginx/build.sh',
-      ],
+      commands: ['./nginx/build.sh'],
     },
   ] + [
     {
       name: 'nginx test ' + distro,
-      image: platform_image(distro, arch),
+      image: platform_image(distro),
       commands: ['./nginx/test.sh'],
     }
     for distro in distros
@@ -38,14 +38,12 @@ local build(arch, ui) = [{
     {
       name: 'filebrowser',
       image: 'debian:bookworm-slim',
-      commands: [
-        './filebrowser/build.sh ' + version,
-      ],
+      commands: ['./filebrowser/build.sh ' + version],
     },
   ] + [
     {
       name: 'filebrowser test ' + distro,
-      image: platform_image(distro, arch),
+      image: platform_image(distro),
       commands: ['./filebrowser/test.sh'],
     }
     for distro in distros
@@ -53,14 +51,12 @@ local build(arch, ui) = [{
     {
       name: 'cli',
       image: 'golang:' + go,
-      commands: [
-        './cli/build.sh',
-      ],
+      commands: ['./cli/build.sh'],
     },
   ] + [
     {
       name: 'cli test ' + distro,
-      image: platform_image(distro, arch),
+      image: platform_image(distro),
       commands: ['./cli/test.sh'],
     }
     for distro in distros
@@ -68,34 +64,40 @@ local build(arch, ui) = [{
     {
       name: 'package',
       image: 'debian:bookworm-slim',
-      commands: [
-        './package.sh ' + name + ' $DRONE_BUILD_NUMBER',
-      ],
+      commands: ['./package.sh ' + name + ' $DRONE_BUILD_NUMBER'],
     },
   ] + [
+    {
+      name: 'test ' + distro,
+      image: 'python:' + python,
+      commands: ['./ci/test.sh test.py ' + distro + ' ' + arch],
+    }
+    for distro in distros
+  ] + (if ui then [
          {
-           name: 'test ' + distro,
+           name: 'e2e',
+           image: playwright,
+           commands: ['./test/e2e/run.sh specs/01-smoke.spec.ts'],
+         },
+         {
+           name: 'test-upgrade-prev',
            image: 'python:' + python,
-           commands: ['./test/ci-test.sh ' + distro + ' ' + arch],
-         }
-         for distro in distros
-       ] + (if ui then [
+           commands: ['./ci/test.sh upgrade_prev.py ' + distro_default + ' ' + arch],
+         },
          {
-           name: 'test-ui-' + project,
-           image: 'mcr.microsoft.com/playwright:' + playwright,
-           commands: ['./web/e2e/ci-ui.sh ' + project],
-         }
-         for project in ['desktop']
-       ] + [
+           name: 'e2e-before-upgrade',
+           image: playwright,
+           commands: ['./test/e2e/run.sh specs/02-pre-upgrade.spec.ts'],
+         },
          {
            name: 'test-upgrade',
            image: 'python:' + python,
-           commands: ['./test/ci-upgrade.sh buster ' + arch],
+           commands: ['./ci/test.sh upgrade.py ' + distro_default + ' ' + arch],
          },
          {
-           name: 'test-ui-after-upgrade',
-           image: 'mcr.microsoft.com/playwright:' + playwright,
-           commands: ['PLAYWRIGHT_DOMAIN=buster.com ./web/e2e/ci-ui.sh desktop'],
+           name: 'e2e-after-upgrade',
+           image: playwright,
+           commands: ['./test/e2e/run.sh specs/03-post-upgrade.spec.ts'],
          },
        ] else []) + [
     {
@@ -135,9 +137,9 @@ local build(arch, ui) = [{
   services: [
     {
       name: name + '.' + distro + '.com',
-      image: platform_image(distro, arch),
+      image: platform_image(distro),
       privileged: true,
-      entrypoint: ['/bin/sh', '-c', "mkdir -p /etc/systemd/system/snapd.service.d && printf '[Service]\\nExecStartPost=/bin/sh -c \"/usr/bin/snap set system refresh.hold=2099-01-01T00:00:00Z\"\\n' > /etc/systemd/system/snapd.service.d/disable-refresh.conf && exec /sbin/init"],
+      entrypoint: ['/bin/sh', '-c', snapd_hold],
       volumes: [
         { name: 'dbus', path: '/var/run/dbus' },
         { name: 'dev', path: '/dev' },
